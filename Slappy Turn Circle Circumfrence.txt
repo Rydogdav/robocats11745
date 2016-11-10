@@ -1,0 +1,4 @@
+SlappyWheelMeasurements:
+15,1/4" across from back wheel to front wheel(turn circle diameter)
+Turn Circle Radius: 7.625" or 7,5/8"
+turn Circle Circumfrence: 7.625" * Pi = 22.82"
