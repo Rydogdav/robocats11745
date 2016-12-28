@@ -13,6 +13,7 @@ Version 2.1.1- Tweaked gear numbers to acommadate for motor power curve
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -24,50 +25,58 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV;
+import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.Shoot;
+
+
 @TeleOp(name="TeleOp v2.2 DEV", group="TeleOp")  // @Autonomous(...) is the other common choice
 @Disabled
-public class FTC745RobitTeleOp_v2_2_DEV extends OpMode {
+public abstract class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
     /* Declare OpMode members. */
+    FTC745Drive_v2_0_DEV Drive= new FTC745Drive_v2_0_DEV();
     public ElapsedTime runtime = new ElapsedTime();
 
     public DcMotor motorFLeft = null;
     public DcMotor motorFRight = null;
     public DcMotor motorBLeft = null;
     public DcMotor motorBRight = null;
-    public DcMotor motorLshoot = null;
-    public DcMotor motorRshoot = null;
+    public static DcMotor motorLshoot = null;
+    public static DcMotor motorRshoot = null;
     public DcMotor motorThrasher = null;
     public DcMotor motorLoadAmmo = null;
     public Servo servoThrasherArm = null;
-    public Servo servoShooterPipe = null;
+    public static Servo servoShooterPipe = null;
     public GyroSensor gyroMain = null;
     public ColorSensor colorsensMain = null;
     public OpticalDistanceSensor colorsensLine = null;
     public OpticalDistanceSensor distanceMain = null;
+
+    public static double lshootPower = 0.15;
+    public static double rshootPower = 0.18;
+    public static int shootpipeMax = 200;
+    public static int shootpipeMin = 120;
 
     public double North = 0;
     public double East = 0;
 
     public int currentHeading = 0;
 
+    public static double currentGear = 0;
+    public static String gearStatus = null;
+
     public double Forward = 0;
     public double Strafe = 0;
     public double TurnCW = 0;
 
-    public double currentGear = 0;
-    public String gearStatus = null;
     final public double Kf = 0.8;   //Ether's Kf
     final public double Ks = 1;   //Ether's Ks
     final public double Kt = 1;   //Ether's Kt
 
     public double maxMotorPower = 1.0;
 
-
-    //Code to run ONCE when the driver hits INIT
-
     @Override
-    public void init() {
-
+    public void runOpMode(){
         motorFLeft = hardwareMap.dcMotor.get("motorFLeft");
         motorFRight = hardwareMap.dcMotor.get("motorFRight");
         motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
@@ -81,6 +90,7 @@ public class FTC745RobitTeleOp_v2_2_DEV extends OpMode {
 
 
         gyroMain = hardwareMap.gyroSensor.get("gyroMain");
+
         //servoMain = hardwareMap.servo.get("servoMain");
         //colorsensMain = hardwareMap.colorSensor.get("colorsensMain");
         //colorsensLine = hardwareMap.opticalDistanceSensor.get("colorsensLine");
@@ -90,44 +100,15 @@ public class FTC745RobitTeleOp_v2_2_DEV extends OpMode {
         //recalibrate gyro TAKE OUT WHEN AUTONOMOUS IS WORKING
         gyroMain.calibrate();
         telemetry.addData("Status", "Initialized. Welcome user. v2.3 Now with PRECISION!!! (and Debug Gyro)!");
-        // eg: Set the drive motor directions:
-        // Reverse the motor that runs backwards when connected directly to the battery
-        // leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        //  rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        //servoMain.setPosition(homeServoMain);
-        //positionMain = servoMain.getPosition();
-        // telemetry.addData("Status", "Initialized");
-
-    }
-
-
-    // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-
-    @Override
-    public void init_loop() {
-    }
-
-    /*
-     * Code to run ONCE when the driver hits PLAY
-     */
-    @Override
-    public void start() {
-        runtime.reset();
-    }
-
-    /*
-     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
-     */
-    //Don't forget to run to phone!
-    @Override
-    public void loop() {
+        servoShooterPipe.setPosition(120);
+        waitForStart();
         telemetry.addData("Status: ", "Good luck! Running: " + runtime.toString());
 
         //Driver 1 Controls
         // get driver gear input
         if (gamepad1.right_bumper && gamepad1.x) {
-            currentGear = 1.0;
             gearStatus = "Full Power Activated";
+            currentGear = 1.0;
         }
         if (gamepad1.right_bumper && gamepad1.a) {
             currentGear = 0.30;
@@ -139,75 +120,72 @@ public class FTC745RobitTeleOp_v2_2_DEV extends OpMode {
         }
         telemetry.addData("Gear: ", gearStatus);
         telemetry.update();
-
         //Driver 2 Controls
-        if (gamepad2.right_bumper && gamepad2.b) {
-            motorLshoot.setPower(1);
-            motorRshoot.setPower(1);
+        if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
+            motorLshoot.setPower(lshootPower);
+            motorRshoot.setPower(rshootPower);
         }
-        if (gamepad2.b) {
+        if(gamepad2.y){
+            Shoot();
+            sleep(2000);
+            servoShooterPipe.setPosition(shootpipeMin);
+        }
+        if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() > 0) {
             motorLshoot.setPower(0);
             motorRshoot.setPower(0);
         }
+
         if (gamepad2.a) {
             motorThrasher.setPower(1);
         }
         if (gamepad2.left_stick_y >= .25) {
         }
 
-            //get driver joystick input
-            North = +gamepad1.left_stick_y;   //away from driver on field
-            East = -gamepad1.left_stick_x;   //right with respect to driver
-            TurnCW = -gamepad1.right_stick_x; //clockwise
+        //get driver joystick input
+        North = +gamepad1.left_stick_y;   //away from driver on field
+        East = -gamepad1.left_stick_x;   //right with respect to driver
+        TurnCW = -gamepad1.right_stick_x; //clockwise
 
-            //Convert from field-centric inputs to robot-centric commands
-            currentHeading = gyroMain.getHeading();
-            currentHeading = 0;
-            Forward = +North * Math.cos(currentHeading) + East * Math.sin(currentHeading);
-            Strafe = -North * Math.sin(currentHeading) + East * Math.cos(currentHeading);
+        //Convert from field-centric inputs to robot-centric commands
+        currentHeading = gyroMain.getHeading();
+        currentHeading = 0;
+        Forward = +North * Math.cos(currentHeading) + East * Math.sin(currentHeading);
+        Strafe = -North * Math.sin(currentHeading) + East * Math.cos(currentHeading);
 
-            //Scaling outputs for gear input and tuning constants
-            Forward = currentGear * Kf * Forward;
-            Strafe = currentGear * Ks * Strafe;
-            TurnCW = currentGear * Kt * TurnCW;
+        //Scaling outputs for gear input and tuning constants
+        Forward = currentGear * Kf * Forward;
+        Strafe = currentGear * Ks * Strafe;
+        TurnCW = currentGear * Kt * TurnCW;
 
-            //apply inverse kinematics to the scaled input
-            double motorFLeftv = +Forward + TurnCW + Strafe;
-            double motorFRightv = +Forward - TurnCW - Strafe;
-            double motorBLeftv = +Forward + TurnCW - Strafe;
-            double motorBRightv = +Forward - TurnCW + Strafe;
+        //apply inverse kinematics to the scaled input
+        double motorFLeftv = +Forward + TurnCW + Strafe;
+        double motorFRightv = +Forward - TurnCW - Strafe;
+        double motorBLeftv = +Forward + TurnCW - Strafe;
+        double motorBRightv = +Forward - TurnCW + Strafe;
 
-            //find maximum input
-            double maxInput = Math.abs(motorFLeftv);
-            if (Math.abs(motorFRightv) > maxInput) maxInput = Math.abs(motorFRightv);
-            if (Math.abs(motorBLeftv) > maxInput) maxInput = Math.abs(motorBLeftv);
-            if (Math.abs(motorBRightv) > maxInput) maxInput = Math.abs(motorBRightv);
+        //find maximum input
+        double maxInput = Math.abs(motorFLeftv);
+        if (Math.abs(motorFRightv) > maxInput) maxInput = Math.abs(motorFRightv);
+        if (Math.abs(motorBLeftv) > maxInput) maxInput = Math.abs(motorBLeftv);
+        if (Math.abs(motorBRightv) > maxInput) maxInput = Math.abs(motorBRightv);
 
 
-            //normalize to maximum allowed motor power
-            if (maxInput > maxMotorPower) {
-                motorFLeftv = maxMotorPower * motorFLeftv / maxInput;
-                motorFRightv = maxMotorPower * motorFRightv / maxInput;
-                motorBLeftv = maxMotorPower * motorBLeftv / maxInput;
-                motorBRightv = maxMotorPower * motorBRightv / maxInput;
-            }
-
-            //send power settings to the motors
-            motorFLeft.setPower(motorFLeftv);
-            motorFRight.setPower(motorFRightv);
-            motorBLeft.setPower(motorBLeftv);
-            motorBRight.setPower(motorBRightv);
-            telemetry.addData("Gyro Reading", +gyroMain.getHeading());
-            telemetry.update();
+        //normalize to maximum allowed motor power
+        if (maxInput > maxMotorPower) {
+            motorFLeftv = maxMotorPower * motorFLeftv / maxInput;
+            motorFRightv = maxMotorPower * motorFRightv / maxInput;
+            motorBLeftv = maxMotorPower * motorBLeftv / maxInput;
+            motorBRightv = maxMotorPower * motorBRightv / maxInput;
         }
 
+        //send power settings to the motors
+        motorFLeft.setPower(motorFLeftv);
+        motorFRight.setPower(motorFRightv);
+        motorBLeft.setPower(motorBLeftv);
+        motorBRight.setPower(motorBRightv);
+        telemetry.addData("Gyro Reading", +gyroMain.getHeading());
+        telemetry.update();
+    }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-        @Override
-        public void stop() {
-
-        }
     }
 
