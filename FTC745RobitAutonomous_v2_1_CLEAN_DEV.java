@@ -19,7 +19,7 @@ import static android.os.SystemClock.sleep;
 @Autonomous(name="Auto v2.1 CLEAN DEV", group="Autonomous")
 @Disabled
 
-public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode  {
+public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
     DcMotor motorFRight;
     DcMotor motorFLeft;
     DcMotor motorBRight;
@@ -38,9 +38,6 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode  {
     public Servo servoRight;
     public Servo servoLeft;
 
-    int Xcurr;
-    int Ycurr;
-    int Thetacurr;
     final static int WHEEL_DIAMETER = 4;     //Diameter of the wheel in inches
     final static double WHEEL_DIAMETER_MM = WHEEL_DIAMETER * (25.4);
     final static double CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER_MM;
@@ -83,34 +80,17 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode  {
             telemetry.addData("Alliance ", Alliance);
             telemetry.addData("Starting Position ", startingPosition);
             telemetry.update();
-        idle();
+            idle();
         } while (!selectionConfirmed);
 
         telemetry.addData("Locked in", Alliance, startingPosition);
         telemetry.update();
         idle();
     }
-    public void Fwd(int Xnew, int Ynew, int Thetafinal){
-        if(Xnew != Xcurr || Ynew != Ycurr){
-             int Xdelta = Xnew - Xcurr;
-             int Ydelta = Ynew - Ycurr;
-             double Distance = Math.hypot(Xdelta, Ydelta);
-        }
-    }
-
-
-
-
-
-
-
-
-
-
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-
+    idle();
     }
 }

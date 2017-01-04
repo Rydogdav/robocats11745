@@ -48,15 +48,15 @@ public class FTC745RobitTeleOp_v2_1_RELEASED extends OpMode {
 
     public int currentHeading = 0;
 
-    public double Forward = 0;
-    public double Strafe = 0;
-    public double TurnCW = 0;
+    public double Forward = 1;
+    public double Strafe = 1;
+    public double TurnCW = 1;
 
     public double currentGear = 0;
     public String gearStatus = null;
-    final public double Kf = 0.5;   //Ether's Kf
+    final public double Kf = 1;   //Ether's Kf
     final public double Ks = 1;   //Ether's Ks
-    final public double Kt = 1;   //Ether's Kt
+    final public double Kt = 0.8;   //Ether's Kt
 
     public double maxMotorPower = 1.0;
 

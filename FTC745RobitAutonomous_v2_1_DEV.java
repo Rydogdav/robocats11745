@@ -39,7 +39,7 @@ public class FTC745RobitAutonomous_v2_1_DEV extends LinearOpMode {
     final static double ROBOT_TURN_CIRCLE_RADIUS = 7.625;
     final static double ROBOT_TURN_CURCUMFERENCE = ROBOT_TURN_CIRCLE_RADIUS * Math.PI * 25.4;
 
-    final static double TILE_SIZE = 609.6;  // 24" in millimeters
+    final static double TILE = 610;  // 24" in millimeters
 
     double GYRO_HEADING = 0;
     java.lang.String name = "Auto v1.1";
@@ -336,10 +336,10 @@ public class FTC745RobitAutonomous_v2_1_DEV extends LinearOpMode {
         }
         private void LineFollower() {
             while(colorsensLine.getRawLightDetected() < 0.5){
-                ASSMove(TILE_SIZE * 4, true);
+                ASSMove(TILE * 4, true);
             } if (colorsensLine.getRawLightDetected() >= 0.5) {
                 telemetry.addLine("LINE DETECTED");
-                LinearMoveSlow(TILE_SIZE * 0.5, true);
+                LinearMoveSlow(TILE * 0.5, true);
                 BeaconPusher();
             }
         }
@@ -348,13 +348,13 @@ public class FTC745RobitAutonomous_v2_1_DEV extends LinearOpMode {
 
             } else {
                 servoRight.setPosition(90);
-                LinearMoveSlow(TILE_SIZE * 0.25, true);
+                LinearMoveSlow(TILE * 0.25, true);
                 }
             if (Alliance == "Blue" && (colorsensFLeft.argb() <= 3)) {
 
             } else {
                 servoRight.setPosition(90);
-                LinearMoveSlow(TILE_SIZE * 0.25, true);
+                LinearMoveSlow(TILE * 0.25, true);
                 }
             }*/
 
@@ -410,7 +410,7 @@ public class FTC745RobitAutonomous_v2_1_DEV extends LinearOpMode {
                 telemetry.addData("Right Power", motorFRight.getPower());
                 telemetry.update();
 
-                ASSMove(TILE_SIZE * 4 , true);
+                ASSMove(TILE * 4 , true);
 
                 idle();
             }while(opModeIsActive());

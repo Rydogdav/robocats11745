@@ -25,7 +25,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.Shoot;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.Shooting.ParticleShoot;
 
 
 @TeleOp(name="Shoot Test v1.0", group="TeleOp")  // @Autonomous(...) is the other common choice
@@ -66,7 +66,7 @@ public class FTC745RobitShootTestv1_0 extends LinearOpMode {
                     sleep(3000);
                 }
                 servoShooterPipe.setPosition(shootpipeMax);
-                sleep(2000);
+                sleep(1000);
                 servoShooterPipe.setPosition(shootpipeMin);
                 idle();
             }
