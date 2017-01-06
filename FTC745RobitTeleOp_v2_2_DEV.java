@@ -1,84 +1,48 @@
-/**
-Made by Daylan Davis and Collin Gustafson
-Captained by Ryan Davitt
-This program is the first TeleOp version for the FTC 11745 team of 2016-17 Slappy Robit 2.0.
-This program (version 1.0) was originally used for Slappy 1.0 until the Scrimmage of '16, when the team made a total overhaul of Slappy 1.0.
-Slappy 2.0 now resides in the Woodrow Wilson High School Robotics Room. Slappy 1.0 resides in soul.
-
-@Verison 2.1.1
-
-Version 2.1- RELEASE
-Version 2.1.1- Tweaked gear numbers to acommadate for motor power curve
-**/
-
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.*;
-import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp;
+import static android.os.SystemClock.sleep;
 
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.motorBLeftv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.motorBRightv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.motorFLeftv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.motorFRightv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.Shooting.ParticleShoot;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.FieldCentricMecanum;
+@Autonomous(name="Auto v2.1 CLEAN DEV", group="Autonomous")
+@Disabled
 
+public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
+    DcMotor motorFRight;
+    DcMotor motorFLeft;
+    DcMotor motorBRight;
+    DcMotor motorBLeft;
 
+    GyroSensor gyroMain;
 
-@TeleOp(name="TeleOp v2.2 DEV", group="TeleOp")  // @Autonomous(...) is the other common choice
-public abstract class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
-    /* Declare OpMode members. */
-    public ElapsedTime runtime = new ElapsedTime();
+    public ColorSensor colorsensFLeft = null;
+    public ColorSensor colorsensBLeft = null;
+    public ColorSensor colorsensFRight = null;
+    public ColorSensor colorsensBRight = null;
 
-    public static DcMotor motorFLeft = null;
-    public static DcMotor motorFRight = null;
-    public static DcMotor motorBLeft = null;
-    public static DcMotor motorBRight = null;
-    public static DcMotor motorLshoot = null;
-    public static DcMotor motorRshoot = null;
-    public static DcMotor motorThrasher = null;
-    public static DcMotor motorLoadAmmo = null;
-    public static Servo servoThrasherArm = null;
-    public static Servo servoShooterPipe = null;
-    public static GyroSensor gyroMain = null;
-    public ColorSensor colorsensMain = null;
-    public OpticalDistanceSensor colorsensLine = null;
     public OpticalDistanceSensor distanceMain = null;
+    final static double PERFECT_COLOR_VALUE = 0.3;
 
-    public static double lshootPower = 0.15;
-    public static double rshootPower = 0.18;
-    public static int shootpipeMax = 200;
-    public static int shootpipeMin = 120;
+    public Servo servoRight;
+    public Servo servoLeft;
 
-    public double North = 0;
-    public double East = 0;
+    public double motorFLeftPower = 0;
+    public double motorBLeftPower = 0;
+    public double motorFRightPower = 0;
+    public double motorBRightPower = 0;
 
-    public static int currentHeading = 0;
-
-    public static double currentGear = 0;
-    public static String gearStatus = null;
-
-    public static double Forward = 0;
-    public static double Strafe = 0;
-    public static double TurnCW = 0;
-
-    final static public double Kf = 0.8;   //Ether's Kf
-    final static public double Ks = 1;   //Ether's Ks
-    final static public double Kt = 1;   //Ether's Kt
-
-    public static double maxMotorPower = 1.0;
     final static int WHEEL_DIAMETER = 4;     //Diameter of the wheel in inches
     final static double WHEEL_DIAMETER_MM = WHEEL_DIAMETER * (25.4);
     final static double CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER_MM;
@@ -88,103 +52,77 @@ public abstract class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
     final static double ROBOT_TURN_CIRCLE_RADIUS = 7.625;
     final static double ROBOT_TURN_CURCUMFERENCE = ROBOT_TURN_CIRCLE_RADIUS * Math.PI * 25.4;
 
-    final static int TILE = 610;
 
-    public static boolean thrasherToggle;
-
-
-    @Override
-    public void runOpMode() {
-        motorFLeft = hardwareMap.dcMotor.get("motorFLeft");
-        motorFRight = hardwareMap.dcMotor.get("motorFRight");
-        motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
-        motorBRight = hardwareMap.dcMotor.get("motorBRight");
-        //motorLshoot = hardwareMap.dcMotor.get("motorLshoot");
-        //motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
-        motorThrasher = hardwareMap.dcMotor.get("motorThrasher");
-        motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        ///motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
+    String Alliance;
+    String startingPosition;
+    boolean selectionConfirmed = false;
 
 
-        gyroMain = hardwareMap.gyroSensor.get("gyroMain");
+    private void getAutonomousParameters() {
+    /*press X for blue, press B for red (press F to pay respects)
+        right bumper for choosing the alliance, left bumper for starting position (A,B,C)*/
+        telemetry.addData("Right Bumper & X --> BLUE; B-->RED", "LEFT BUMPER & A, B, Y --> STARTING POSITION (A, B, C)");
+        telemetry.update();
 
-        //servoMain = hardwareMap.servo.get("servoMain");
-        //colorsensMain = hardwareMap.colorSensor.get("colorsensMain");
-        //colorsensLine = hardwareMap.opticalDistanceSensor.get("colorsensLine");
-        //distanceMain = hardwareMap.opticalDistanceSensor.get("distanceMain");
-        //colorsensLine.enableLed(true);
-
-        //recalibrate gyro TAKE OUT WHEN AUTONOMOUS IS WORKING
-        gyroMain.calibrate();
-        telemetry.addData("Status", "Initialized. Welcome user. v2.3 Now with PRECISION!!! (and Debug Gyro)!");
-        //servoShooterPipe.setPosition(120);
-        waitForStart();
         do {
-            telemetry.addData("Status: ", "Good luck! Running: " + runtime.toString());
+            if (gamepad1.b && gamepad1.right_bumper ||
+                    gamepad2.b && gamepad2.right_bumper) Alliance = "Red";
 
-            //Driver 1 Controls
-            // get driver gear input
-            if (gamepad1.right_bumper && gamepad1.x) {
-                gearStatus = "Full Power Activated";
-                currentGear = 1.0;
-            }
-            if (gamepad1.right_bumper && gamepad1.a) {
-                currentGear = 0.30;
-                gearStatus = "Shooter Mode Activated";
-            }
-            if (gamepad1.right_bumper && gamepad1.b) {
-                currentGear = 0.20;
-                gearStatus = "Precision Mode Activated";
-            }
-            telemetry.addData("Gear: ", gearStatus);
-            telemetry.update();
-            //Driver 2 Controls
-            if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
-                motorLshoot.setPower(lshootPower);
-                motorRshoot.setPower(rshootPower);
-            }
-            if (gamepad2.y) {
-                ParticleShoot();
-                sleep(2000);
-                servoShooterPipe.setPosition(shootpipeMin);
-                idle();
-            }
-            if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() > 0) {
-                motorLshoot.setPower(0);
-                motorRshoot.setPower(0);
-                idle();
-            }
+            if (gamepad1.x && gamepad1.right_bumper ||
+                    gamepad2.x && gamepad2.right_bumper) Alliance = "Blue";
 
-            //get driver joystick input
-            North = +gamepad1.left_stick_y;   //away from driver on field
-            East = -gamepad1.left_stick_x;   //right with respect to driver
-            TurnCW = -gamepad1.right_stick_x; //clockwise
-            FieldCentricMecanum(North, East, TurnCW);
+            if (gamepad1.a && gamepad1.left_bumper ||
+                    gamepad2.a && gamepad2.left_bumper) startingPosition = "A";
 
-            if (gamepad2.a && thrasherToggle == false) {
-                thrasherToggle = true;
-            }
-            if (gamepad2.a && thrasherToggle) {
-                thrasherToggle = false;
-                idle();
-            }
-            if (thrasherToggle) {
-                motorThrasher.setPower(gamepad2.right_trigger);
-                idle();
-            }
-            idle();
-            //send power settings to the motors
-            motorFLeft.setPower(motorFLeftv);
-            motorFRight.setPower(motorFRightv);
-            motorBLeft.setPower(motorBLeftv);
-            motorBRight.setPower(motorBRightv);
-            telemetry.addData("Gyro Reading", +gyroMain.getHeading());
+            if (gamepad1.b && gamepad1.left_bumper ||
+                    gamepad2.b && gamepad2.left_bumper) startingPosition = "B";
+
+            if (gamepad1.y && gamepad1.left_bumper ||
+                    gamepad2.y && gamepad2.left_bumper) startingPosition = "C";
+
+            if ((gamepad1.right_bumper && gamepad1.left_bumper) ||
+                    (gamepad2.right_bumper && gamepad2.left_bumper))
+                selectionConfirmed = true;
+
+            telemetry.addData("Alliance ", Alliance);
+            telemetry.addData("Starting Position ", startingPosition);
             telemetry.update();
             idle();
-        }while(opModeIsActive());
+        } while (!selectionConfirmed);
+
+        telemetry.addData("Locked in", Alliance, startingPosition);
+        telemetry.update();
         idle();
     }
 
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+
     }
+
+    private void LineFollower() {
+        telemetry.addData("Color Value", distanceMain.getLightDetected());
+        telemetry.update();
+        while (true) {
+            double correction = (PERFECT_COLOR_VALUE - distanceMain.getLightDetected());
+            if (correction <= 0) {
+                motorBLeftPower = 0.2 - correction;
+                motorFLeftPower = 0.2 - correction;
+                motorBRightPower = 0.2;
+                motorFRightPower = 0.2;
+            } else {
+                motorBLeftPower = 0.2;
+                motorFLeftPower = 0.2;
+                motorBRightPower = 0.2 + correction;
+                motorFRightPower = 0.2 + correction;
+            }
+            motorFLeft.setPower(motorFLeftPower);
+            motorBLeft.setPower(motorBLeftPower);
+            motorFRight.setPower(motorFRightPower);
+            motorBRight.setPower(motorBRightPower);
+        }
+    }
+}
 
