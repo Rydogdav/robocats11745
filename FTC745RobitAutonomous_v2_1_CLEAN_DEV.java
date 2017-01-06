@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -97,36 +98,36 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-            motorFLeft = hardwareMap.dcMotor.get("motorFLeft");
-            motorFRight = hardwareMap.dcMotor.get("motorFRight");
-            motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
-            motorBRight = hardwareMap.dcMotor.get("motorBRight");
-            distanceMain = hardwareMap.opticalDistanceSensor.get("distanceMain");
-            waitForStart();
-            LineFollower();
+        motorFLeft = hardwareMap.dcMotor.get("motorFLeft");
+        motorFRight = hardwareMap.dcMotor.get("motorFRight");
+        motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
+        motorBRight = hardwareMap.dcMotor.get("motorBRight");
+        distanceMain = hardwareMap.opticalDistanceSensor.get("distanceMain");
+        waitForStart();
+        LineFollower();
 
     }
 
     public void LineFollower() {
         do {
-        telemetry.addData("Color Value", distanceMain.getLightDetected());
-        telemetry.update();
+            telemetry.addData("Color Value", distanceMain.getLightDetected());
+            telemetry.update();
             correction = (PERFECT_COLOR_VALUE - distanceMain.getLightDetected());
             if (correction <= 0) {
                 motorBLeftPower = 0.1 - correction;
                 motorFLeftPower = 0.1 - correction;
-                motorBRightPower = (0.1) * -1;
-                motorFRightPower = (0.1) * -1;
+                motorBRightPower = (0.1);
+                motorFRightPower = (0.1);
             } else {
                 motorBLeftPower = 0.1;
                 motorFLeftPower = 0.1;
-                motorBRightPower = (0.1 + correction) * -1;
-                motorFRightPower = (0.1 + correction) * -1;
+                motorBRightPower = (0.1 + correction);
+                motorFRightPower = (0.1 + correction);
             }
             motorFLeft.setPower(motorFLeftPower);
             motorBLeft.setPower(motorBLeftPower);;
-            motorFRight.setPower(motorFRightPower);
-            motorBRight.setPower(motorBRightPower);
+            -motorFRight.setPower(motorFRightPower);
+            -motorBRight.setPower(motorBRightPower);
             idle();
         } while(true);
     }
