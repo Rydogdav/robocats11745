@@ -32,11 +32,16 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
     public ColorSensor colorsensFRight = null;
     public ColorSensor colorsensBRight = null;
 
-    public OpticalDistanceSensor colorsensLine = null;
     public OpticalDistanceSensor distanceMain = null;
+    final static double PERFECT_COLOR_VALUE = 0.3;
 
     public Servo servoRight;
     public Servo servoLeft;
+
+    public double motorFLeftPower = 0;
+    public double motorBLeftPower = 0;
+    public double motorFRightPower = 0;
+    public double motorBRightPower = 0;
 
     final static int WHEEL_DIAMETER = 4;     //Diameter of the wheel in inches
     final static double WHEEL_DIAMETER_MM = WHEEL_DIAMETER * (25.4);
@@ -47,9 +52,11 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
     final static double ROBOT_TURN_CIRCLE_RADIUS = 7.625;
     final static double ROBOT_TURN_CURCUMFERENCE = ROBOT_TURN_CIRCLE_RADIUS * Math.PI * 25.4;
 
+
     String Alliance;
     String startingPosition;
     boolean selectionConfirmed = false;
+
 
     private void getAutonomousParameters() {
     /*press X for blue, press B for red (press F to pay respects)
@@ -91,6 +98,30 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-    idle();
+
+
+    }
+
+    private void LineFollower() {
+        telemetry.addData("Color Value", distanceMain.getLightDetected());
+        telemetry.update();
+        while (true) {
+            double correction = (PERFECT_COLOR_VALUE - distanceMain.getLightDetected());
+            if (correction <= 0) {
+                motorBLeftPower = 0.2 - correction;
+                motorFLeftPower = 0.2 - correction;
+                motorBRightPower = 0.2;
+                motorFRightPower = 0.2;
+            } else {
+                motorBLeftPower = 0.2;
+                motorFLeftPower = 0.2;
+                motorBRightPower = 0.2 + correction;
+                motorFRightPower = 0.2 + correction;
+            }
+            motorFLeft.setPower(motorFLeftPower);
+            motorBLeft.setPower(motorBLeftPower);
+            motorFRight.setPower(motorFRightPower);
+            motorBRight.setPower(motorBRightPower);
+        }
     }
 }
