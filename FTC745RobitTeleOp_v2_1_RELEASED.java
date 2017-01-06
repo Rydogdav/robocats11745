@@ -39,6 +39,7 @@ public class FTC745RobitTeleOp_v2_1_RELEASED extends OpMode {
     public DcMotor motorBLeft = null;
     public DcMotor motorBRight = null;
     public GyroSensor gyroMain = null;
+    public Servo servoMain = null;
     public ColorSensor colorsensMain = null;
     public OpticalDistanceSensor colorsensLine = null;
     public OpticalDistanceSensor distanceMain = null;
@@ -74,7 +75,7 @@ public class FTC745RobitTeleOp_v2_1_RELEASED extends OpMode {
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         gyroMain = hardwareMap.gyroSensor.get("gyroMain");
-        //servoMain = hardwareMap.servo.get("servoMain");
+        servoMain = hardwareMap.servo.get("servoMain");
         //colorsensMain = hardwareMap.colorSensor.get("colorsensMain");
         //colorsensLine = hardwareMap.opticalDistanceSensor.get("colorsensLine");
         //distanceMain = hardwareMap.opticalDistanceSensor.get("distanceMain");
@@ -90,7 +91,7 @@ public class FTC745RobitTeleOp_v2_1_RELEASED extends OpMode {
         //servoMain.setPosition(homeServoMain);
         //positionMain = servoMain.getPosition();
         // telemetry.addData("Status", "Initialized");
-
+        servoMain.setPosition(0);
     }
 
 
@@ -133,9 +134,11 @@ public class FTC745RobitTeleOp_v2_1_RELEASED extends OpMode {
         telemetry.update();
 
         //get driver joystick input
-        North = + gamepad1.left_stick_y;   //away from driver on field
+        /*North = + gamepad1.left_stick_y;   //away from driver on field
         East = - gamepad1.left_stick_x;   //right with respect to driver
-        TurnCW =  - gamepad1.right_stick_x; //clockwise
+        TurnCW =  - gamepad1.right_stick_x;*/ //clockwise
+        North = - gamepad1.left_stick_y;   //away from driver on field
+        TurnCW =  + gamepad1.right_stick_x; //clockwise
 
         //Convert from field-centric inputs to robot-centric commands
         //currentHeading = gyroMain.getHeading();
