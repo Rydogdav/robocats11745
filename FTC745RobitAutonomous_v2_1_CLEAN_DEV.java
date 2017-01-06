@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static android.os.SystemClock.sleep;
 
 @Autonomous(name="Auto v2.1 CLEAN DEV", group="Autonomous")
-@Disabled
+
 
 public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
     DcMotor motorFRight;
@@ -33,10 +33,8 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
     public ColorSensor colorsensBRight = null;
 
     public OpticalDistanceSensor distanceMain = null;
-    final static double PERFECT_COLOR_VALUE = 0.3;
-
-    public Servo servoRight;
-    public Servo servoLeft;
+    final static double PERFECT_COLOR_VALUE = 0.05;
+    public  double correction;
 
     public double motorFLeftPower = 0;
     public double motorBLeftPower = 0;
@@ -91,6 +89,7 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         } while (!selectionConfirmed);
 
         telemetry.addData("Locked in", Alliance, startingPosition);
+        telemetry.addData("Color Value" , distanceMain.getLightDetected());
         telemetry.update();
         idle();
     }
@@ -98,30 +97,37 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
+            motorFLeft = hardwareMap.dcMotor.get("motorFLeft");
+            motorFRight = hardwareMap.dcMotor.get("motorFRight");
+            motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
+            motorBRight = hardwareMap.dcMotor.get("motorBRight");
+            distanceMain = hardwareMap.opticalDistanceSensor.get("distanceMain");
+            waitForStart();
+            LineFollower();
 
     }
 
-    private void LineFollower() {
+    public void LineFollower() {
+        do {
         telemetry.addData("Color Value", distanceMain.getLightDetected());
         telemetry.update();
-        while (true) {
-            double correction = (PERFECT_COLOR_VALUE - distanceMain.getLightDetected());
+            correction = (PERFECT_COLOR_VALUE - distanceMain.getLightDetected());
             if (correction <= 0) {
-                motorBLeftPower = 0.2 - correction;
-                motorFLeftPower = 0.2 - correction;
-                motorBRightPower = 0.2;
-                motorFRightPower = 0.2;
+                motorBLeftPower = 0.1 - correction;
+                motorFLeftPower = 0.1 - correction;
+                motorBRightPower = (0.1) * -1;
+                motorFRightPower = (0.1) * -1;
             } else {
-                motorBLeftPower = 0.2;
-                motorFLeftPower = 0.2;
-                motorBRightPower = 0.2 + correction;
-                motorFRightPower = 0.2 + correction;
+                motorBLeftPower = 0.1;
+                motorFLeftPower = 0.1;
+                motorBRightPower = (0.1 + correction) * -1;
+                motorFRightPower = (0.1 + correction) * -1;
             }
             motorFLeft.setPower(motorFLeftPower);
             motorBLeft.setPower(motorBLeftPower);
             motorFRight.setPower(motorFRightPower);
             motorBRight.setPower(motorBRightPower);
-        }
+            idle();
+        } while(true);
     }
 }
