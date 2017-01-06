@@ -124,7 +124,7 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
                 motorFRightPower = (0.1 + correction) * -1;
             }
             motorFLeft.setPower(motorFLeftPower);
-            motorBLeft.setPower(motorBLeftPower);
+            motorBLeft.setPower(motorBLeftPower);;
             motorFRight.setPower(motorFRightPower);
             motorBRight.setPower(motorBRightPower);
             idle();
