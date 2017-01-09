@@ -1,13 +1,15 @@
 /**
- Made by Daylan Davis and Collin Gustafson
- Captained by Ryan Davitt
- This program is the first TeleOp version for the FTC 11745 team of 2016-17 Slappy Robit 2.0.
- This program (version 1.0) was originally used for Slappy 1.0 until the Scrimmage of '16, when the team made a total overhaul of Slappy 1.0.
- Slappy 2.0 now resides in the Woodrow Wilson High School Robotics Room. Slappy 1.0 resides in soul.
- @Verison 2.1.1
- Version 2.1- RELEASE
- Version 2.1.1- Tweaked gear numbers to acommadate for motor power curve
- **/
+Made by Daylan Davis and Collin Gustafson
+Captained by Ryan Davitt
+This program is the first TeleOp version for the FTC 11745 team of 2016-17 Slappy Robit 2.0.
+This program (version 1.0) was originally used for Slappy 1.0 until the Scrimmage of '16, when the team made a total overhaul of Slappy 1.0.
+Slappy 2.0 now resides in the Woodrow Wilson High School Robotics Room. Slappy 1.0 resides in soul.
+
+@Verison 2.1.1
+
+Version 2.1- RELEASE
+Version 2.1.1- Tweaked gear numbers to acommadate for motor power curve
+**/
 
 package org.firstinspires.ftc.teamcode;
 
@@ -26,6 +28,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.*;
 import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp;
 
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.ResetEncoder;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.motorBLeftv;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.motorBRightv;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.motorFLeftv;
@@ -44,7 +47,6 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
     public static DcMotor motorBRight = null;
     public static DcMotor motorLshoot = null;
     public static DcMotor motorRshoot = null;
-    public static Servo servoMain = null;
     public static Servo servoShooterPipe = null;
     public static GyroSensor gyroMain = null;
     public ColorSensor colorsensMain = null;
@@ -90,13 +92,12 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
         motorFRight = hardwareMap.dcMotor.get("motorFRight");
         motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
         motorBRight = hardwareMap.dcMotor.get("motorBRight");
-        servoMain = hardwareMap.servo.get("servoMain");
         //motorLshoot = hardwareMap.dcMotor.get("motorLshoot");
         //motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
         motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
         ///motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
-        colorsensMain = hardwareMap.colorSensor.get("colorsensMain");
+
 
         gyroMain = hardwareMap.gyroSensor.get("gyroMain");
 
@@ -110,18 +111,16 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
         gyroMain.calibrate();
         telemetry.addData("Status", "Initialized. Welcome user. v2.3 Now with PRECISION!!! (and Debug Gyro)!");
         //servoShooterPipe.setPosition(120);
-        servoMain.setPosition(0);
         idle();
         waitForStart();
         telemetry.clearAll();
         do{
-        telemetry.addData("Color Numbers", colorsensMain.argb());
-        telemetry.update();
+
             //Driver 1 Controls
             // get driver gear input
             if (gamepad1.right_bumper && gamepad1.x) {
                 gearStatus = "Full Power Activated";
-                currentGear = 1.0;
+                currentGear = 0.9;
             }
             if (gamepad1.right_bumper && gamepad1.a) {
                 currentGear = 0.30;
@@ -132,7 +131,6 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
                 gearStatus = "Precision Mode Activated";
             }
             telemetry.addData("Gear: ", gearStatus);
-            telemetry.update();
             //Driver 2 Controls
             /*if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
                 motorLshoot.setPower(lshootPower);
@@ -151,28 +149,31 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
             }*/
 
             //get driver joystick input
-            /*North = +gamepad1.left_stick_y;   //away from driver on field
+            North = +gamepad1.left_stick_y;   //away from driver on field
             East = -gamepad1.left_stick_x;   //right with respect to driver
-            TurnCW = -gamepad1.right_stick_x;*/ //clockwise
-            North = - gamepad1.left_stick_y;   //away from driver on field
-            TurnCW =  + gamepad1.right_stick_x; //clockwise
-
+            TurnCW = -gamepad1.right_stick_x; //clockwise
             FieldCentricMecanum(North, East, TurnCW);
 
-            if(gamepad1.y && servoMain.getPosition() != 0){
-                servoMain.setPosition(0);
-            }
-            if(gamepad1.y && servoMain.getPosition() == 0){
-                servoMain.close();
-            }
             idle();
-
             //send power settings to the motors
             motorFLeft.setPower(motorFLeftv);
             motorFRight.setPower(motorFRightv);
             motorBLeft.setPower(motorBLeftv);
             motorBRight.setPower(motorBRightv);
+
+            //DEBUG
+            if(gamepad1.y){
+                ResetEncoder();
+            }
+            motorFLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorBLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorFRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorBRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             telemetry.addData("Gyro Reading", +gyroMain.getHeading());
+            telemetry.addData("Motor FLeft:", motorFLeft.getCurrentPosition());
+            telemetry.addData("Motor BRight:", motorBRight.getCurrentPosition());
+            telemetry.addData("Motor FRight:", motorFRight.getCurrentPosition());
+            telemetry.addData("Motor BLeft:", motorBLeft.getCurrentPosition());
             telemetry.update();
             idle();
         }while(opModeIsActive() && !isStopRequested());
@@ -181,4 +182,3 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
     }
 
 }
-
