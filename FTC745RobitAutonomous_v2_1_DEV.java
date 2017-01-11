@@ -248,7 +248,7 @@ public class FTC745RobitAutonomous_v2_1_DEV extends LinearOpMode {
                     }
                 }
                 idle();
-            }while(move);
+            } while(move);
         }
         private void ASSMove(double DISTANCE, boolean FORWARDS){ //"AutomatedStabilitySystemMove"
             double HEADING_TARGET;
