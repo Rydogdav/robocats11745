@@ -18,14 +18,14 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.hardware.DcMotorSimple;
-        import com.qualcomm.robotcore.hardware.GyroSensor;
-        import com.qualcomm.robotcore.hardware.Servo;
-        import com.qualcomm.robotcore.hardware.configuration.ServoControllerConfiguration;
-        import com.qualcomm.robotcore.util.ElapsedTime;
-        import com.qualcomm.robotcore.hardware.ColorSensor;
-        import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
-        import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.ServoControllerConfiguration;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name="TeleOp v2.1.1 FULL", group="TeleOp")  // @Autonomous(...) is the other common choice
 
