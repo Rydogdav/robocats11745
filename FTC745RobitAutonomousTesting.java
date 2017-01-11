@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.ASSMove;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.Fwd;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.Xcurr;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.Ycurr;
@@ -28,10 +29,13 @@ public class FTC745RobitAutonomousTesting extends LinearOpMode {
         motorBRight = hardwareMap.dcMotor.get("motorBRight");
         gyroMain.calibrate();
         telemetry.addLine("1.0 Initilized");
-        waitForStart();
-        Xcurr = 0;
-        Ycurr = 0;
-        Fwd(TILE * 2, TILE, 0, true);
         idle();
+        waitForStart();
+        ASSMove(TILE * 2, true);
+        /*Xcurr = 0;
+        Ycurr = 0;
+        Fwd(TILE * 2, TILE, 0, true);*/
+        idle();
+        requestOpModeStop();
     }
 }

@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -18,7 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static android.os.SystemClock.sleep;
 
 @Autonomous(name="Auto v2.1 CLEAN DEV", group="Autonomous")
-
+@Disabled
 
 public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
     DcMotor motorFRight;
@@ -33,14 +32,11 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
     public ColorSensor colorsensFRight = null;
     public ColorSensor colorsensBRight = null;
 
+    public OpticalDistanceSensor colorsensLine = null;
     public OpticalDistanceSensor distanceMain = null;
-    final static double PERFECT_COLOR_VALUE = 0.05;
-    public  double correction;
 
-    public double motorFLeftPower = 0;
-    public double motorBLeftPower = 0;
-    public double motorFRightPower = 0;
-    public double motorBRightPower = 0;
+    public Servo servoRight;
+    public Servo servoLeft;
 
     final static int WHEEL_DIAMETER = 4;     //Diameter of the wheel in inches
     final static double WHEEL_DIAMETER_MM = WHEEL_DIAMETER * (25.4);
@@ -51,11 +47,9 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
     final static double ROBOT_TURN_CIRCLE_RADIUS = 7.625;
     final static double ROBOT_TURN_CURCUMFERENCE = ROBOT_TURN_CIRCLE_RADIUS * Math.PI * 25.4;
 
-
     String Alliance;
     String startingPosition;
     boolean selectionConfirmed = false;
-
 
     private void getAutonomousParameters() {
     /*press X for blue, press B for red (press F to pay respects)
@@ -90,7 +84,6 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         } while (!selectionConfirmed);
 
         telemetry.addData("Locked in", Alliance, startingPosition);
-        telemetry.addData("Color Value" , distanceMain.getLightDetected());
         telemetry.update();
         idle();
     }
@@ -98,37 +91,6 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        motorFLeft = hardwareMap.dcMotor.get("motorFLeft");
-        motorFRight = hardwareMap.dcMotor.get("motorFRight");
-        motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
-        motorBRight = hardwareMap.dcMotor.get("motorBRight");
-        distanceMain = hardwareMap.opticalDistanceSensor.get("distanceMain");
-        waitForStart();
-        LineFollower();
-
-    }
-
-    public void LineFollower() {
-        do {
-            telemetry.addData("Color Value", distanceMain.getLightDetected());
-            telemetry.update();
-            correction = (PERFECT_COLOR_VALUE - distanceMain.getLightDetected());
-            if (correction <= 0) {
-                motorBLeftPower = 0.1 - correction;
-                motorFLeftPower = 0.1 - correction;
-                motorBRightPower = (0.1);
-                motorFRightPower = (0.1);
-            } else {
-                motorBLeftPower = 0.1;
-                motorFLeftPower = 0.1;
-                motorBRightPower = (0.1 + correction);
-                motorFRightPower = (0.1 + correction);
-            }
-            motorFLeft.setPower(motorFLeftPower);
-            motorBLeft.setPower(motorBLeftPower);;
-            -motorFRight.setPower(motorFRightPower);
-            -motorBRight.setPower(motorBRightPower);
-            idle();
-        } while(true);
+    idle();
     }
 }
