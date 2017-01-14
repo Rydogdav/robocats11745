@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.FTC745Lib;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 
+import static org.firstinspires.ftc.teamcode.FTC745RobitShootTestv1_0.servoShooterGate;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.Forward;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.Kf;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.Ks;
@@ -13,17 +16,15 @@ import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.Stra
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.currentGear;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.gyroMain;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.currentHeading;
-import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.lshootPower;
-import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.maxMotorPower;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.motorBLeft;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.motorBRight;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.motorFLeft;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.motorFRight;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.motorLshoot;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.motorRshoot;
-import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.rshootPower;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.servoShooterPipe;
-import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.shootpipeMax;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.maxMotorPower;
+
 
 
 
@@ -38,8 +39,11 @@ public class FTC745Drive_v2_0_RELEASE {
         public static double motorBLeftFwd;
         public static double motorBRightFwd;
 
+
         public static void FieldCentricMecanum(double North, double East, double TurnCW) {
-            //Convert from field-centric inputs to robot-centric commands
+            double strfOffset = 0.1;
+            double fwdRevOffset = 0.95;
+                    //Convert from field-centric inputs to robot-centric commands
             currentHeading = gyroMain.getHeading();
             currentHeading = 0;
             Forward = +North * Math.cos(currentHeading) + East * Math.sin(currentHeading);
@@ -56,68 +60,67 @@ public class FTC745Drive_v2_0_RELEASE {
             motorBLeftv = +Forward + TurnCW - Strafe;
             motorBRightv = +Forward - TurnCW + Strafe;
 
-            //find maximum input
-            double maxInput = Math.abs(motorFLeftv);
-            if (Math.abs(motorFRightv) > maxInput) maxInput = Math.abs(motorFRightv);
-            if (Math.abs(motorBLeftv) > maxInput) maxInput = Math.abs(motorBLeftv);
-            if (Math.abs(motorBRightv) > maxInput) maxInput = Math.abs(motorBRightv);
-
-
-            //normalize to maximum allowed motor power
-            if (maxInput > maxMotorPower) {
-                motorFLeftv = maxMotorPower * motorFLeftv / maxInput;
-                motorFRightv = maxMotorPower * motorFRightv / maxInput;
-                motorBLeftv = maxMotorPower * motorBLeftv / maxInput;
-                motorBRightv = maxMotorPower * motorBRightv / maxInput;
-            }
-
-            if (motorFLeftv < 0) {
+            if (motorFLeftv != 0) {
                 motorFLeftv = motorFLeftv * motorFLeftFwd;
             }
-            if (motorFRightv < 0) {
+            if (motorFRightv != 0) {
                 motorFRightv = motorFRightv * motorFRightFwd;
             }
-            if (motorBLeftv < 0) {
+            if (motorBLeftv != 0) {
                 motorBLeftv = motorBLeftv * motorBLeftFwd;
             }
-            if (motorBRightv < 0) {
+            if (motorBRightv != 0) {
                 motorBRightv = motorBRightv * motorBRightFwd;
             }
                 if (motorFLeftv != 0) {
-
+                    motorFLeftv = motorFLeftv * 1;
                 }
                 if (motorBRightv != 0) {
-
+                    motorBRightv = motorBRightv * 0.95;
                 }
                 if (motorFRightv != 0) {
-
+                    motorFRightv = motorFRightv * 1;
                 }
                 if (motorBLeftv != 0) {
                     motorBLeftv = motorBLeftv * 1.3;
                 }
                 if (motorFLeft.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                    motorFLeftFwd = 0.9;
+                    motorFLeftFwd = 1 - strfOffset;
                 }
                 if (motorFRight.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                    motorFRightFwd = 0.9;
+                    motorFRightFwd = 1 - strfOffset;
                 }
                 if (motorBLeft.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                    motorBLeftFwd = 0.9;
+                    motorBLeftFwd = 1 - strfOffset;
                 }
                 if (motorBRight.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                    motorBRightFwd = 0.9;
+                    motorBRightFwd = 1 - strfOffset;
                 }
                 if (motorFLeft.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                    motorFLeftFwd = 1;
+                    motorFLeftFwd = 1 + strfOffset;
                 }
                 if (motorFRight.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                    motorFRightFwd = 1;
+                    motorFRightFwd = 1 + strfOffset;
                 }
                 if (motorBLeft.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                    motorBLeftFwd = 1;
+                    motorBLeftFwd = 1 + strfOffset;
                 }
                 if (motorBRight.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                    motorBRightFwd = 1;
+                    motorBRightFwd = 1 + strfOffset;
+                }
+                //find maximum input
+                double maxInput = Math.abs(motorFLeftv);
+                if (Math.abs(motorFRightv) > maxInput) maxInput = Math.abs(motorFRightv);
+                if (Math.abs(motorBLeftv) > maxInput) maxInput = Math.abs(motorBLeftv);
+                if (Math.abs(motorBRightv) > maxInput) maxInput = Math.abs(motorBRightv);
+
+
+               //normalize to maximum allowed motor power
+                if (maxInput > maxMotorPower) {
+                    motorFLeftv = maxMotorPower * motorFLeftv / maxInput;
+                    motorFRightv = maxMotorPower * motorFRightv / maxInput;
+                    motorBLeftv = maxMotorPower * motorBLeftv / maxInput;
+                    motorBRightv = maxMotorPower * motorBRightv / maxInput;
                 }
             }
         }
@@ -324,12 +327,40 @@ public class FTC745Drive_v2_0_RELEASE {
         }
 
         public abstract static class Shooting extends LinearOpMode {
-            public static void ParticleShoot() {
-                if (motorLshoot.getPower() >= 0 || motorRshoot.getPower() >= 0) {
+            public static void ParticleShootTele() {
+                double lshootPower = 0.13;
+                double rshootPower = 0.17;
+                double shootpipeMax = 0.8;
+                double shootpipeMin = 0.55;
+                if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
                     motorLshoot.setPower(lshootPower);
                     motorRshoot.setPower(rshootPower);
+                    SystemClock.sleep(3000);
                 }
                 servoShooterPipe.setPosition(shootpipeMax);
+                SystemClock.sleep(1000);
+                servoShooterPipe.setPosition(shootpipeMin);
+                servoShooterPipe.setPosition(shootpipeMax);
+            }
+
+            public static void ParticleShootAuton() {
+                double lshootPower = 0.13;
+                double rshootPower = 0.17;
+                double shootpipeMax = 0.8;
+                double shootpipeMin = 0.55;
+                double shootgateMax = 0.27;
+                double shootgateMin = 0.75;
+                if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
+                    motorLshoot.setPower(lshootPower);
+                    motorRshoot.setPower(rshootPower);
+                    SystemClock.sleep(3000);
+                }
+                servoShooterPipe.setPosition(shootpipeMax);
+                SystemClock.sleep(1000);
+                servoShooterPipe.setPosition(shootpipeMin);
+                servoShooterGate.setPosition(shootgateMax);
+                SystemClock.sleep(1000);
             }
         }
     }
+
