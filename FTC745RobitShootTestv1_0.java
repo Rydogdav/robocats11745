@@ -13,6 +13,8 @@ Version 2.1.1- Tweaked gear numbers to acommadate for motor power curve
 
 package org.firstinspires.ftc.teamcode;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -24,8 +26,8 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.Shooting.ParticleShoot;
+import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.Shooting.ParticleShootTele;
 
 
 @TeleOp(name="Shoot Test v1.0", group="TeleOp")  // @Autonomous(...) is the other common choice
@@ -34,11 +36,14 @@ public class FTC745RobitShootTestv1_0 extends LinearOpMode {
     public static DcMotor motorLshoot = null;
     public static DcMotor motorRshoot = null;
     public static Servo servoShooterPipe = null;
+    public static Servo servoShooterGate = null;
 
     public static double lshootPower = 0.13;
     public static double rshootPower = 0.17;
-    public static double shootpipeMax = 0.8;
-    public static double shootpipeMin = 0.55;
+    public static double shootpipeMax = 0.1;
+    public static double shootpipeMin = 0.04;
+    public static double shootgateMax = 0.27;
+    public static double shootgateMin = 0.75;
 
     @Override
     public void runOpMode() {
@@ -56,24 +61,28 @@ public class FTC745RobitShootTestv1_0 extends LinearOpMode {
             if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
-                sleep(200);
+                SystemClock.sleep(200);
                 idle();
             }
             if (gamepad2.y) {
                 if(motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower){
                     motorLshoot.setPower(lshootPower);
                     motorRshoot.setPower(rshootPower);
-                    sleep(3000);
+                    SystemClock.sleep(3000);
                 }
                 servoShooterPipe.setPosition(shootpipeMax);
-                sleep(1000);
+                SystemClock.sleep(1000);
                 servoShooterPipe.setPosition(shootpipeMin);
+                SystemClock.sleep(500);
+                servoShooterGate.setPosition(shootgateMax);
+                SystemClock.sleep(1000);
+                servoShooterGate.setPosition(shootgateMin);
                 idle();
             }
             if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() > 0) {
                 motorLshoot.setPower(0);
                 motorRshoot.setPower(0);
-                sleep(200);
+                SystemClock.sleep(200);
                 idle();
         }
         idle();
