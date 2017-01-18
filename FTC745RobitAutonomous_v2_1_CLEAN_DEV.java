@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -16,6 +18,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static android.os.SystemClock.sleep;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.AllStop;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveAuton.Xcurr;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveAuton.Ycurr;
 
 @Autonomous(name="Auto v2.1 CLEAN DEV", group="Autonomous")
 
@@ -33,13 +38,12 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
     public ColorSensor colorsensFRight = null;
     public ColorSensor colorsensBRight = null;
 
-    public OpticalDistanceSensor distanceMain = null;
-    final static double PERFECT_COLOR_VALUE = 0.05;
-    public  double correction;
+    public OpticalDistanceSensor distanceMainF = null;
+    public OpticalDistanceSensor distanceMainB = null;
+
 
     public double motorFLeftPower = 0;
-    public double motorBLeftPower = 0;
-    public double motorFRightPower = 0;
+    public double motorBLeftPower = 0;    public double motorFRightPower = 0;
     public double motorBRightPower = 0;
 
     final static int WHEEL_DIAMETER = 4;     //Diameter of the wheel in inches
@@ -55,6 +59,7 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
     String Alliance;
     String startingPosition;
     boolean selectionConfirmed = false;
+
 
 
     private void getAutonomousParameters() {
@@ -90,11 +95,41 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         } while (!selectionConfirmed);
 
         telemetry.addData("Locked in", Alliance, startingPosition);
-        telemetry.addData("Color Value" , distanceMain.getLightDetected());
+        telemetry.addData("Color Value", distanceMainF.getLightDetected());
         telemetry.update();
         idle();
     }
 
+    public void coordinateSet() {
+        if (Alliance == "Blue") {
+            if (startingPosition == "A") {
+                Xcurr = -838;
+                Ycurr = -1561;
+            }
+            if (startingPosition == "B") {
+                Xcurr = -229;
+                Ycurr = -1561;
+            }
+            if (startingPosition == "C") {
+                Xcurr = 381;
+                Ycurr = -1561;
+            }
+        }
+        if (Alliance == "Red") {
+            if (startingPosition == "A") {
+                Xcurr = 838;
+                Ycurr = 1561;
+            }
+            if (startingPosition == "B") {
+                Xcurr = 229;
+                Ycurr = -1561;
+            }
+            if (startingPosition == "C") {
+                Xcurr = -381;
+                Ycurr = -1561;
+            }
+        }
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -102,33 +137,59 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         motorFRight = hardwareMap.dcMotor.get("motorFRight");
         motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
         motorBRight = hardwareMap.dcMotor.get("motorBRight");
-        distanceMain = hardwareMap.opticalDistanceSensor.get("distanceMain");
+        motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        distanceMainF = hardwareMap.opticalDistanceSensor.get("distanceMainF");
         waitForStart();
         LineFollower();
-
+        idle();
     }
 
     public void LineFollower() {
-        do {
-            telemetry.addData("Color Value", distanceMain.getLightDetected());
-            telemetry.update();
-            correction = (PERFECT_COLOR_VALUE - distanceMain.getLightDetected());
-            if (correction <= 0) {
-                motorBLeftPower = 0.1 - correction;
-                motorFLeftPower = 0.1 - correction;
-                motorBRightPower = (0.1);
-                motorFRightPower = (0.1);
-            } else {
-                motorBLeftPower = 0.1;
-                motorFLeftPower = 0.1;
-                motorBRightPower = (0.1 + correction);
-                motorFRightPower = (0.1 + correction);
-            }
-            motorFLeft.setPower(motorFLeftPower);
-            motorBLeft.setPower(motorBLeftPower);;
-            -motorFRight.setPower(motorFRightPower);
-            -motorBRight.setPower(motorBRightPower);
-            idle();
-        } while(true); /* hello! */
+        final double PERFECT_COLOR_VALUE = .825;
+        double correctionA;
+        double correctionB;
+        final double MOTOR_BASE_POWER = 0.075;
+        boolean lineFound = false;
+        boolean lineFoundB = false;
+        telemetry.setMsTransmissionInterval(250);
+            distanceMainF.enableLed(true);
+            do {
+                correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
+                correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+                if (correctionA < 0) {
+                    lineFound = true;
+                }
+                if (!lineFound){
+                    motorFLeft.setPower(MOTOR_BASE_POWER);
+                    motorBLeft.setPower(MOTOR_BASE_POWER);
+                    motorFRight.setPower(MOTOR_BASE_POWER);
+                    motorBRight.setPower(MOTOR_BASE_POWER);
+                }
+                if(lineFound) {
+                    motorFLeftPower = -.1;
+                    motorBLeftPower = -.1;
+                    motorFRightPower = .1;
+                    motorBRightPower = .1;
+                }
+                if(correctionB < 0){
+                    lineFoundB = true;
+                }
+                if(lineFoundB){
+                    AllStop();
+                    SystemClock.sleep(500);
+                }
+                if(correctionA < 0)
+                    lineFound = true;
+                motorFLeft.setPower(motorFLeftPower);
+                motorBLeft.setPower(motorBLeftPower);
+                motorFRight.setPower(motorFRightPower);
+                motorBRight.setPower(motorBRightPower);
+                idle();
+                telemetry.addData("Color Value", distanceMainF.getLightDetected());
+                telemetry.addData("Correction", correctionA);
+                telemetry.update();
+            } while(!isStopRequested());
+        }
     }
-}
