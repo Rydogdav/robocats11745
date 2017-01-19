@@ -17,10 +17,14 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV;
+
 import static android.os.SystemClock.sleep;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.AllStop;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.AllStop;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Fwd;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveAuton.Xcurr;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveAuton.Ycurr;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Fwd;
 
 @Autonomous(name="Auto v2.1 CLEAN DEV", group="Autonomous")
 
@@ -141,8 +145,43 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
         distanceMainF = hardwareMap.opticalDistanceSensor.get("distanceMainF");
+
         waitForStart();
-        LineFollower();
+
+        if (Alliance == "Blue") {
+            if (startingPosition == "A");
+                Fwd(-838,-1179,0,true);
+                //Fwd(Shooting);
+                Fwd(1409,0,0,true);
+
+            if (startingPosition == "B");
+                Fwd(-229,-456,0,true);
+                //Fwd(Shooting);
+                Fwd(1409,0,0,true);
+
+            if (startingPosition == "C");
+                Fwd(381,-951,0,true);
+                //Fwd(Shooting);
+                Fwd(1404,0,0,true);
+        }
+        if (Alliance == "Red")
+            if (startingPosition == "A")
+                Fwd(838,-1179,0,true);
+                //Fwd(Shooting);
+                Fwd(-1409,0,0,true);
+
+            if (startingPosition == "B")
+                Fwd(1179,838,0,true);
+                //Fwd(Shooting);
+                Fwd(0,-1409,0,true);
+
+            if (startingPosition == "C")
+                Fwd(229,-456,0,true);
+                //Fwd(Shooting);
+                Fwd(-1404,0,0,true);
+
+
+
         idle();
     }
 
