@@ -189,7 +189,7 @@ public class FTC745Drive_v2_1_DEV {
             final static double ROBOT_TURN_CIRCLE_RADIUS = 7.625;
             final static double ROBOT_TURN_CURCUMFERECE = ROBOT_TURN_CIRCLE_RADIUS * Math.PI * 25.4;
 
-            private static void AllStop() {
+            public static void AllStop() {
                 motorBLeft.setPower(0);
                 motorBRight.setPower(0);
                 motorFLeft.setPower(0);
