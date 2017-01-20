@@ -48,9 +48,9 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
     public OpticalDistanceSensor distanceMainF = null;
     public OpticalDistanceSensor distanceMainB = null;
 
-
     public double motorFLeftPower = 0;
-    public double motorBLeftPower = 0;    public double motorFRightPower = 0;
+    public double motorBLeftPower = 0;
+    public double motorFRightPower = 0;
     public double motorBRightPower = 0;
 
     final static int WHEEL_DIAMETER = 4;     //Diameter of the wheel in inches
@@ -148,51 +148,52 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
         distanceMainF = hardwareMap.opticalDistanceSensor.get("distanceMainF");
+        distanceMainB = hardwareMap.opticalDistanceSensor.get("distanceMainB");
 
         waitForStart();
-
+        LineFollower();
+        idle();
+    }
+    public void AutonInstructions(){
+        coordinateSet();
         if (Alliance == "Blue") {
             if (startingPosition == "A");
-                Fwd(-838,-1179,0,true);
-                ParticleShootAuton();
-                Fwd(1409,0,0,true);
+            Fwd(-838,-1179,0,true);
+            ParticleShootAuton();
+            Fwd(1409,0,0,true);
 
             if (startingPosition == "B");
-                Fwd(-229,-456,0,true);
-                ParticleShootAuton();
-                Fwd(1409,0,0,true);
+            Fwd(-229,-456,0,true);
+            ParticleShootAuton();
+            Fwd(1409,0,0,true);
 
             if (startingPosition == "C");
-                Fwd(381,-951,0,true);
-                ParticleShootAuton();
-                Fwd(1404,0,0,true);
+            Fwd(381,-951,0,true);
+            ParticleShootAuton();
+            Fwd(1404,0,0,true);
         }
         if (Alliance == "Red")
             if (startingPosition == "A")
                 Fwd(838,-1179,0,true);
-                ParticleShootAuton();
-                Fwd(-1409,0,0,true);
+        ParticleShootAuton();
+        Fwd(-1409,0,0,true);
 
-            if (startingPosition == "B")
-                Fwd(1179,838,0,true);
-                ParticleShootAuton();
-                Fwd(0,-1409,0,true);
+        if (startingPosition == "B")
+            Fwd(1179,838,0,true);
+        ParticleShootAuton();
+        Fwd(0,-1409,0,true);
 
-            if (startingPosition == "C")
-                Fwd(229,-456,0,true);
-                ParticleShootAuton();
-                Fwd(-1404,0,0,true);
+        if (startingPosition == "C")
+            Fwd(229,-456,0,true);
+        ParticleShootAuton();
+        Fwd(-1404,0,0,true);
 
-
-
-        idle();
     }
-
     public void LineFollower() {
         final double PERFECT_COLOR_VALUE = .825;
         double correctionA;
         double correctionB;
-        final double MOTOR_BASE_POWER = 0.075;
+        final double MOTOR_BASE_POWER = 0.3;
         boolean lineFound = false;
         boolean lineFoundB = false;
         telemetry.setMsTransmissionInterval(250);
@@ -202,7 +203,19 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
                 correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
                 if (correctionA < 0) {
                     lineFound = true;
+                    motorFLeft.setPower(MOTOR_BASE_POWER - correctionA);
+                    motorBLeft.setPower(MOTOR_BASE_POWER - correctionA);
+                    motorFRight.setPower(MOTOR_BASE_POWER);
+                    motorBRight.setPower(MOTOR_BASE_POWER);
                 }
+                else
+                    motorFLeft.setPower(MOTOR_BASE_POWER);
+                    motorBLeft.setPower(MOTOR_BASE_POWER);
+                    motorFRight.setPower(MOTOR_BASE_POWER - correctionA);
+                    motorBRight.setPower(MOTOR_BASE_POWER - correctionA);
+
+
+
                 if (!lineFound){
                     motorFLeft.setPower(MOTOR_BASE_POWER);
                     motorBLeft.setPower(MOTOR_BASE_POWER);
@@ -230,7 +243,8 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
                 motorBRight.setPower(motorBRightPower);
                 idle();
                 telemetry.addData("Color Value", distanceMainF.getLightDetected());
-                telemetry.addData("Correction", correctionA);
+                telemetry.addData("CorrectionA", correctionA);
+                telemetry.addData("CorrectionB", correctionB);
                 telemetry.update();
             } while(!isStopRequested());
         }
