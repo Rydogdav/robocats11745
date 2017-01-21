@@ -326,17 +326,16 @@ public class FTC745Drive_v2_1_DEV {
 
     public abstract static class Shooting extends LinearOpMode {
         public static void ParticleShootTele() {
-            double shootpipeMax = 0.1;
-            double shootpipeMin = 0.04;
-
-            servoShooterPipe.setPosition(shootpipeMax);
-            SystemClock.sleep(1000);
+            double shootpipeMin = 0.1;
+            double shootpipeMax = 0.04;
             servoShooterPipe.setPosition(shootpipeMin);
+            SystemClock.sleep(1000);
+            servoShooterPipe.setPosition(shootpipeMax);
         }
 
         public static void ParticleShootAuton() {
-            double lshootPower = 0.13;
-            double rshootPower = 0.17;
+            double lshootPower = 0.17;
+            double rshootPower = 0.23;
             double shootpipeMax = 0.1;
             double shootpipeMin = 0.04;
             double shootgateMax = 0.27;
