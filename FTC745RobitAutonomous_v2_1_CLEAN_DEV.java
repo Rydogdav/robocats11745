@@ -193,59 +193,67 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         final double PERFECT_COLOR_VALUE = .825;
         double correctionA;
         double correctionB;
-        final double MOTOR_BASE_POWER = 0.3;
+        final double MOTOR_BASE_POWER = 0.1;
         boolean lineFound = false;
         boolean lineFoundB = false;
+        String codePosition = "Nowhere";
         telemetry.setMsTransmissionInterval(250);
             distanceMainF.enableLed(true);
             do {
                 correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
                 correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+
                 if (correctionA < 0) {
                     lineFound = true;
-                    motorFLeft.setPower(MOTOR_BASE_POWER - correctionA);
-                    motorBLeft.setPower(MOTOR_BASE_POWER - correctionA);
-                    motorFRight.setPower(MOTOR_BASE_POWER);
-                    motorBRight.setPower(MOTOR_BASE_POWER);
+                    correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
+                    correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+                    codePosition = "Line found";
                 }
-                else
-                    motorFLeft.setPower(MOTOR_BASE_POWER);
-                    motorBLeft.setPower(MOTOR_BASE_POWER);
-                    motorFRight.setPower(MOTOR_BASE_POWER - correctionA);
-                    motorBRight.setPower(MOTOR_BASE_POWER - correctionA);
-
-
 
                 if (!lineFound){
                     motorFLeft.setPower(MOTOR_BASE_POWER);
                     motorBLeft.setPower(MOTOR_BASE_POWER);
                     motorFRight.setPower(MOTOR_BASE_POWER);
                     motorBRight.setPower(MOTOR_BASE_POWER);
+                    correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
+                    correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+                    codePosition = "Rollin'";
                 }
                 if(lineFound) {
                     motorFLeftPower = -.1;
                     motorBLeftPower = -.1;
                     motorFRightPower = .1;
                     motorBRightPower = .1;
+                    correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
+                    correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+                    codePosition = "Line found spin";
                 }
                 if(correctionB < 0){
                     lineFoundB = true;
+                    correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
+                    correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
                 }
                 if(lineFoundB){
                     AllStop();
                     SystemClock.sleep(500);
+                    if(lineFoundB){
+                    motorFLeft.setPower(MOTOR_BASE_POWER - correctionA);
+                    motorBLeft.setPower(MOTOR_BASE_POWER - correctionA);
+                    motorFRight.setPower(MOTOR_BASE_POWER);
+                    motorBRight.setPower(MOTOR_BASE_POWER);
+                    }else
+                    motorFLeft.setPower(MOTOR_BASE_POWER);
+                    motorBLeft.setPower(MOTOR_BASE_POWER);
+                    motorFRight.setPower(MOTOR_BASE_POWER - correctionA);
+                    motorBRight.setPower(MOTOR_BASE_POWER - correctionA);
+                    codePosition = "Turning with Corresction";
                 }
-                if(correctionA < 0)
-                    lineFound = true;
-                motorFLeft.setPower(motorFLeftPower);
-                motorBLeft.setPower(motorBLeftPower);
-                motorFRight.setPower(motorFRightPower);
-                motorBRight.setPower(motorBRightPower);
                 idle();
                 telemetry.addData("Color Value", distanceMainF.getLightDetected());
                 telemetry.addData("CorrectionA", correctionA);
                 telemetry.addData("CorrectionB", correctionB);
+                telemetry.addLine(codePosition);
                 telemetry.update();
-            } while(!isStopRequested());
+            }while(!isStopRequested());
         }
     }
