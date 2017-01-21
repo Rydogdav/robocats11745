@@ -49,8 +49,8 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
     public OpticalDistanceSensor distanceMain = null;
     public Servo servoMain = null;
 
-    public static double lshootPower = 0.13;
-    public static double rshootPower = 0.17;
+    public static double lshootPower = 0.17;
+    public static double rshootPower = 0.23;
     public static double shootpipeMax = 0.01;
     public static double shootpipeMin = 0.04;
     public double shootgateMax = 0.27;
@@ -123,7 +123,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
             telemetry.addData("Robot Name: ", robotName);
             telemetry.addLine("Press Y When Ready");
             telemetry.update();
-            if(gamepad1.y || gamepad1.y)selectionConfirm = true;
+            if(gamepad1.y || gamepad2.y)selectionConfirm = true;
         }while(selectionConfirm == false);
         telemetry.clear();
         telemetry.addData("Status:", "Initialized. Welcome user. v2.3 DEV Active");
@@ -135,38 +135,38 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
 
             //Driver 1 Controls
             // get driver gear input
-            if (gamepad1.right_bumper && gamepad1.x) {
+            if (gamepad1.right_bumper && gamepad1.x || gamepad2.right_bumper && gamepad2.x) {
                 gearStatus = "Full Power Activated";
                 currentGear = 0.9;
             }
-            if (gamepad1.right_bumper && gamepad1.a) {
+            if (gamepad1.right_bumper && gamepad1.a || gamepad2.right_bumper && gamepad2.a) {
                 currentGear = 0.30;
                 gearStatus = "Shooter Mode Activated";
             }
-            if (gamepad1.right_bumper && gamepad1.b) {
+            if (gamepad1.right_bumper && gamepad1.b || gamepad2.right_bumper && gamepad2.b) {
                 currentGear = 0.20;
                 gearStatus = "Precision Mode Activated";
             }
             telemetry.addData("Gear: ", gearStatus);
             //Driver 2 Controls
-            if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
-                SystemClock.sleep(500); //Reduce double clicking
+            if (gamepad1.left_bumper && gamepad1.a && motorLshoot.getPower() == 0 || gamepad2.left_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
+                SystemClock.sleep(150); //Reduce double clicking
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
             }
-            if (gamepad2.y) {
-                SystemClock.sleep(500); //Reduce double clicking
+            if (gamepad1.left_bumper && gamepad1.y || gamepad2.left_bumper && gamepad2.y) {
+                SystemClock.sleep(150); //Reduce double clicking
                 ParticleShootTele();
                 idle();
             }
-            if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() > 0) {
-                SystemClock.sleep(500); //Reduce double clicking
+            if (gamepad1.left_bumper && gamepad1.a && motorLshoot.getPower() > 0 || gamepad2.left_bumper && gamepad2.a && motorLshoot.getPower() > 0) {
+                SystemClock.sleep(150); //Reduce double clicking
                 motorLshoot.setPower(0);
                 motorRshoot.setPower(0);
                 idle();
             }
-            if (gamepad2.x){
-                SystemClock.sleep(500); //Reduce double clicking
+            if (gamepad1.left_bumper && gamepad1.x || gamepad2.left_bumper && gamepad2.x){
+                SystemClock.sleep(150); //Reduce double clicking
                 servoShooterGate.setPosition(shootgateMin);
                 SystemClock.sleep(2000);
                 servoShooterGate.setPosition(shootgateMax);
@@ -192,7 +192,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
             motorBRight.setPower(motorBRightv);
 
             //DEBUG
-            if(gamepad1.y){
+            if(gamepad1.y || gamepad2.y){
                 SystemClock.sleep(500); //Reduce double clicking
                 ResetEncoder();
             }
