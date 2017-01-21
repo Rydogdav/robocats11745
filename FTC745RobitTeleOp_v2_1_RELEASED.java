@@ -18,14 +18,14 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.hardware.DcMotorSimple;
-        import com.qualcomm.robotcore.hardware.GyroSensor;
-        import com.qualcomm.robotcore.hardware.Servo;
-        import com.qualcomm.robotcore.hardware.configuration.ServoControllerConfiguration;
-        import com.qualcomm.robotcore.util.ElapsedTime;
-        import com.qualcomm.robotcore.hardware.ColorSensor;
-        import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
-        import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.ServoControllerConfiguration;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name="TeleOp v2.1.1 FULL", group="TeleOp")  // @Autonomous(...) is the other common choice
 
@@ -39,6 +39,7 @@ public class FTC745RobitTeleOp_v2_1_RELEASED extends OpMode {
     public DcMotor motorBLeft = null;
     public DcMotor motorBRight = null;
     public GyroSensor gyroMain = null;
+    public Servo servoMain = null;
     public ColorSensor colorsensMain = null;
     public OpticalDistanceSensor colorsensLine = null;
     public OpticalDistanceSensor distanceMain = null;
@@ -48,15 +49,15 @@ public class FTC745RobitTeleOp_v2_1_RELEASED extends OpMode {
 
     public int currentHeading = 0;
 
-    public double Forward = 0;
-    public double Strafe = 0;
-    public double TurnCW = 0;
+    public double Forward = 1;
+    public double Strafe = 1;
+    public double TurnCW = 1;
 
     public double currentGear = 0;
     public String gearStatus = null;
-    final public double Kf = 0.5;   //Ether's Kf
+    final public double Kf = 1;   //Ether's Kf
     final public double Ks = 1;   //Ether's Ks
-    final public double Kt = 1;   //Ether's Kt
+    final public double Kt = 0.8;   //Ether's Kt
 
     public double maxMotorPower = 1.0;
 
@@ -74,7 +75,7 @@ public class FTC745RobitTeleOp_v2_1_RELEASED extends OpMode {
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         gyroMain = hardwareMap.gyroSensor.get("gyroMain");
-        //servoMain = hardwareMap.servo.get("servoMain");
+        servoMain = hardwareMap.servo.get("servoMain");
         //colorsensMain = hardwareMap.colorSensor.get("colorsensMain");
         //colorsensLine = hardwareMap.opticalDistanceSensor.get("colorsensLine");
         //distanceMain = hardwareMap.opticalDistanceSensor.get("distanceMain");
@@ -90,7 +91,7 @@ public class FTC745RobitTeleOp_v2_1_RELEASED extends OpMode {
         //servoMain.setPosition(homeServoMain);
         //positionMain = servoMain.getPosition();
         // telemetry.addData("Status", "Initialized");
-
+        servoMain.setPosition(0);
     }
 
 
@@ -133,9 +134,11 @@ public class FTC745RobitTeleOp_v2_1_RELEASED extends OpMode {
         telemetry.update();
 
         //get driver joystick input
-        North = + gamepad1.left_stick_y;   //away from driver on field
+        /*North = + gamepad1.left_stick_y;   //away from driver on field
         East = - gamepad1.left_stick_x;   //right with respect to driver
-        TurnCW =  - gamepad1.right_stick_x; //clockwise
+        TurnCW =  - gamepad1.right_stick_x;*/ //clockwise
+        North = - gamepad1.left_stick_y;   //away from driver on field
+        TurnCW =  + gamepad1.right_stick_x; //clockwise
 
         //Convert from field-centric inputs to robot-centric commands
         //currentHeading = gyroMain.getHeading();
