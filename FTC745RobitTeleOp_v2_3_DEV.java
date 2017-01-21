@@ -1,45 +1,37 @@
 /**
-Made by Daylan Davis and Collin Gustafson
-Captained by Ryan Davitt
-This program is the first TeleOp version for the FTC 11745 team of 2016-17 Slappy Robit 2.0.
-This program (version 1.0) was originally used for Slappy 1.0 until the Scrimmage of '16, when the team made a total overhaul of Slappy 1.0.
-Slappy 2.0 now resides in the Woodrow Wilson High School Robotics Room. Slappy 1.0 resides in soul.
-
-@Verison 2.1.1
-
-Version 2.1- RELEASE
-Version 2.1.1- Tweaked gear numbers to acommadate for motor power curve
-**/
+ Made by Daylan Davis and Collin Gustafson
+ Captained by Ryan Davitt
+ This program is the first TeleOp version for the FTC 11745 team of 2016-17 Slappy Robit 2.0.
+ This program (version 1.0) was originally used for Slappy 1.0 until the Scrimmage of '16, when the team made a total overhaul of Slappy 1.0.
+ Slappy 2.0 now resides in the Woodrow Wilson High School Robotics Room. Slappy 1.0 resides in soul.
+ @Verison 2.2
+ Version 2.1- RELEASE
+ Version 2.1.1- Tweaked gear numbers to acommadate for motor power curve
+ Version 2.2- RELEASE
+ **/
 
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.*;
-import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp;
-
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.ResetEncoder;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.motorBLeftv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.motorBRightv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.motorFLeftv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.motorFRightv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.Shooting.ParticleShoot;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveTeleOp.FieldCentricMecanum;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.ResetEncoder;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveTeleOp.FieldCentricMecanum;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveTeleOp.motorBLeftv;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveTeleOp.motorBRightv;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveTeleOp.motorFLeftv;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveTeleOp.motorFRightv;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Shooting.ParticleShootTele;
 
 
-
-@TeleOp(name="TeleOp v2.2 DEV", group="TeleOp")  // @Autonomous(...) is the other common choice
-public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
+@TeleOp(name="TeleOp v2.3 DEV", group="TeleOp")  // @Autonomous(...) is the other common choice
+public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
     /* Declare OpMode members. */
     public static DcMotor motorFLeft = null;
     public static DcMotor motorFRight = null;
@@ -52,11 +44,12 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
     public ColorSensor colorsensMain = null;
     public OpticalDistanceSensor colorsensLine = null;
     public OpticalDistanceSensor distanceMain = null;
+    public Servo servoMain = null;
 
-    public static double lshootPower = 0.15;
-    public static double rshootPower = 0.18;
-    public static int shootpipeMax = 200;
-    public static int shootpipeMin = 120;
+    public static double lshootPower = 0.13;
+    public static double rshootPower = 0.17;
+    public static double shootpipeMax = 0.01;
+    public static double shootpipeMin = 0.04;
 
     public double North = 0;
     public double East = 0;
@@ -70,7 +63,7 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
     public static double Strafe = 0;
     public static double TurnCW = 0;
 
-    final static public double Kf = 0.8;   //Ether's Kf
+    final static public double Kf = 1;   //Ether's Kf
     final static public double Ks = 1;   //Ether's Ks
     final static public double Kt = 1;   //Ether's Kt
 
@@ -84,7 +77,7 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
     final static double ROBOT_TURN_CIRCLE_RADIUS = 7.625;
     final static double ROBOT_TURN_CURCUMFERENCE = ROBOT_TURN_CIRCLE_RADIUS * Math.PI * 25.4;
 
-    final static int TILE = 610;
+    final static int TILE = 610; //mm
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -92,11 +85,14 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
         motorFRight = hardwareMap.dcMotor.get("motorFRight");
         motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
         motorBRight = hardwareMap.dcMotor.get("motorBRight");
-        //motorLshoot = hardwareMap.dcMotor.get("motorLshoot");
-        //motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
+        motorLshoot = hardwareMap.dcMotor.get("motorLshoot");
+        motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
+        servoShooterPipe = hardwareMap.servo.get("servoShooterPipe");
+        motorFLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        ///motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         gyroMain = hardwareMap.gyroSensor.get("gyroMain");
@@ -109,8 +105,22 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
 
         //recalibrate gyro TAKE OUT WHEN AUTONOMOUS IS WORKING
         gyroMain.calibrate();
-        telemetry.addData("Status", "Initialized. Welcome user. v2.3 Now with PRECISION!!! (and Debug Gyro)!");
-        //servoShooterPipe.setPosition(120);
+        servoShooterPipe.setPosition(shootpipeMin);
+        boolean selectionConfirm = false;
+        String robotName = "NO NAME! A = Slappy, B = Sloppy.";
+        telemetry.addLine("Please State Robot Name:");
+        telemetry.update();
+        do{
+            if(gamepad1.a || gamepad2.a)robotName = "Slappy";
+            if(gamepad1.b || gamepad2.b)robotName = "Sloppy";
+            telemetry.addData("Robot Name: ", robotName);
+            telemetry.addLine("Press Y When Ready");
+            telemetry.update();
+            if(gamepad1.y || gamepad1.y)selectionConfirm = true;
+        }while(selectionConfirm == false);
+        telemetry.clear();
+        telemetry.addData("Status:", "Initialized. Welcome user. v2.3 DEV Active");
+        telemetry.update();
         idle();
         waitForStart();
         telemetry.clearAll();
@@ -132,12 +142,12 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
             }
             telemetry.addData("Gear: ", gearStatus);
             //Driver 2 Controls
-            /*if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
+            if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
             }
             if (gamepad2.y) {
-                ParticleShoot();
+                ParticleShootTele();
                 sleep(2000);
                 servoShooterPipe.setPosition(shootpipeMin);
                 idle();
@@ -146,12 +156,18 @@ public class FTC745RobitTeleOp_v2_2_DEV extends LinearOpMode {
                 motorLshoot.setPower(0);
                 motorRshoot.setPower(0);
                 idle();
-            }*/
+            }
 
             //get driver joystick input
-            North = +gamepad1.left_stick_y;   //away from driver on field
-            East = -gamepad1.left_stick_x;   //right with respect to driver
-            TurnCW = -gamepad1.right_stick_x; //clockwise
+            if(robotName == "Slappy") {
+                North = +gamepad1.left_stick_y;   //away from driver on field
+                East = -gamepad1.left_stick_x;   //right with respect to driver
+                TurnCW = -gamepad1.right_stick_x;//clockwise
+            }
+            if(robotName == "Sloppy") {
+                North = -gamepad1.left_stick_y;
+                TurnCW = +gamepad1.right_stick_x;
+            }
             FieldCentricMecanum(North, East, TurnCW);
 
             idle();
