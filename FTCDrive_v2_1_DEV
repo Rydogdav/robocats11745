@@ -82,30 +82,30 @@ public class FTC745Drive_v2_1_DEV {
                 motorBLeftv = motorBLeftv * 1.3;
             }
 
-                if (motorFLeft.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                    motorFLeftFwd = 1 - strfOffset;
-                }
-                if (motorFRight.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                    motorFRightFwd = 1 - strfOffset;
-                }
-                if (motorBLeft.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                    motorBLeftFwd = 1 - strfOffset;
-                }
-                if (motorBRight.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                    motorBRightFwd = 1 - strfOffset;
-                }
-                if (motorFLeft.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                    motorFLeftFwd = 1 + strfOffset;
-                }
-                if (motorFRight.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                    motorFRightFwd = 1 + strfOffset;
-                }
-                if (motorBLeft.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                    motorBLeftFwd = 1 + strfOffset;
-                }
-                if (motorBRight.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                    motorBRightFwd = 1 + strfOffset;
-                }
+            if (motorFLeft.getDirection() == DcMotorSimple.Direction.REVERSE) {
+                motorFLeftFwd = 1 - strfOffset;
+            }
+            if (motorFRight.getDirection() == DcMotorSimple.Direction.REVERSE) {
+                motorFRightFwd = 1 - strfOffset;
+            }
+            if (motorBLeft.getDirection() == DcMotorSimple.Direction.REVERSE) {
+                motorBLeftFwd = 1 - strfOffset;
+            }
+            if (motorBRight.getDirection() == DcMotorSimple.Direction.REVERSE) {
+                motorBRightFwd = 1 - strfOffset;
+            }
+            if (motorFLeft.getDirection() == DcMotorSimple.Direction.FORWARD) {
+                motorFLeftFwd = 1 + strfOffset;
+            }
+            if (motorFRight.getDirection() == DcMotorSimple.Direction.FORWARD) {
+                motorFRightFwd = 1 + strfOffset;
+            }
+            if (motorBLeft.getDirection() == DcMotorSimple.Direction.FORWARD) {
+                motorBLeftFwd = 1 + strfOffset;
+            }
+            if (motorBRight.getDirection() == DcMotorSimple.Direction.FORWARD) {
+                motorBRightFwd = 1 + strfOffset;
+            }
             //find maximum input
             double maxInput = Math.abs(motorFLeftv);
             if (Math.abs(motorFRightv) > maxInput) maxInput = Math.abs(motorFRightv);
@@ -332,7 +332,6 @@ public class FTC745Drive_v2_1_DEV {
             servoShooterPipe.setPosition(shootpipeMax);
             SystemClock.sleep(1000);
             servoShooterPipe.setPosition(shootpipeMin);
-            servoShooterPipe.setPosition(shootpipeMax);
         }
 
         public static void ParticleShootAuton() {
@@ -350,8 +349,6 @@ public class FTC745Drive_v2_1_DEV {
             servoShooterPipe.setPosition(shootpipeMax);
             SystemClock.sleep(1000);
             servoShooterPipe.setPosition(shootpipeMin);
-            servoShooterGate.setPosition(shootgateMax);
-            SystemClock.sleep(1000);
         }
     }
 }
