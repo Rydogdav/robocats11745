@@ -18,27 +18,24 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE;
-import org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV;
-
 import static android.os.SystemClock.sleep;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.AllStop;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Fwd;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveAuton.Xcurr;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveAuton.Ycurr;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Xcurr;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Ycurr;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Fwd;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Shooting.ParticleShootAuton;
+
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorFLeft;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorBLeft;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorFRight;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorBRight;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.gyroMain;
 
 @Autonomous(name="Auto v2.1 CLEAN DEV", group="Autonomous")
 
 
 public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
-    DcMotor motorFRight;
-    DcMotor motorFLeft;
-    DcMotor motorBRight;
-    DcMotor motorBLeft;
-
-    GyroSensor gyroMain;
 
     public ColorSensor colorsensFLeft = null;
     public ColorSensor colorsensBLeft = null;
@@ -144,18 +141,19 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         motorFRight = hardwareMap.dcMotor.get("motorFRight");
         motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
         motorBRight = hardwareMap.dcMotor.get("motorBRight");
+        gyroMain = hardwareMap.gyroSensor.get("gyroMain");
         motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
         distanceMainF = hardwareMap.opticalDistanceSensor.get("distanceMainF");
         distanceMainB = hardwareMap.opticalDistanceSensor.get("distanceMainB");
-
+        getAutonomousParameters();
         waitForStart();
-        LineFollower();
+        coordinateSet();
+        AutonInstructions();
         idle();
     }
     public void AutonInstructions(){
-        coordinateSet();
         if (Alliance == "Blue") {
             if (startingPosition == "A");
             Fwd(-838,-1179,0,true);
