@@ -12,6 +12,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -40,6 +42,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
     public static DcMotor motorLshoot = null;
     public static DcMotor motorRshoot = null;
     public static Servo servoShooterPipe = null;
+    public static Servo servoShooterGate = null;
     public static GyroSensor gyroMain = null;
     public ColorSensor colorsensMain = null;
     public OpticalDistanceSensor colorsensLine = null;
@@ -50,6 +53,8 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
     public static double rshootPower = 0.17;
     public static double shootpipeMax = 0.01;
     public static double shootpipeMin = 0.04;
+    public double shootgateMax = 0.27;
+    public double shootgateMin = 0.75;
 
     public double North = 0;
     public double East = 0;
@@ -88,6 +93,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
         motorLshoot = hardwareMap.dcMotor.get("motorLshoot");
         motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
         servoShooterPipe = hardwareMap.servo.get("servoShooterPipe");
+        servoShooterGate = hardwareMap.servo.get("servoShooterGate");
         motorFLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -106,6 +112,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
         //recalibrate gyro TAKE OUT WHEN AUTONOMOUS IS WORKING
         gyroMain.calibrate();
         servoShooterPipe.setPosition(shootpipeMin);
+        servoShooterGate.setPosition(shootgateMax);
         boolean selectionConfirm = false;
         String robotName = "NO NAME! A = Slappy, B = Sloppy.";
         telemetry.addLine("Please State Robot Name:");
@@ -143,19 +150,26 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
             telemetry.addData("Gear: ", gearStatus);
             //Driver 2 Controls
             if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
+                SystemClock.sleep(500); //Reduce double clicking
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
             }
             if (gamepad2.y) {
+                SystemClock.sleep(500); //Reduce double clicking
                 ParticleShootTele();
-                sleep(2000);
-                servoShooterPipe.setPosition(shootpipeMin);
                 idle();
             }
             if (gamepad2.right_bumper && gamepad2.a && motorLshoot.getPower() > 0) {
+                SystemClock.sleep(500); //Reduce double clicking
                 motorLshoot.setPower(0);
                 motorRshoot.setPower(0);
                 idle();
+            }
+            if (gamepad2.x){
+                SystemClock.sleep(500); //Reduce double clicking
+                servoShooterGate.setPosition(shootgateMin);
+                SystemClock.sleep(2000);
+                servoShooterGate.setPosition(shootgateMax);
             }
 
             //get driver joystick input
@@ -165,7 +179,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
                 TurnCW = -gamepad1.right_stick_x;//clockwise
             }
             if(robotName == "Sloppy") {
-                North = -gamepad1.left_stick_y;
+                North = -gamepad1.left_stick_y; //
                 TurnCW = +gamepad1.right_stick_x;
             }
             FieldCentricMecanum(North, East, TurnCW);
@@ -179,6 +193,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
 
             //DEBUG
             if(gamepad1.y){
+                SystemClock.sleep(500); //Reduce double clicking
                 ResetEncoder();
             }
             motorFLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
