@@ -150,17 +150,17 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
             telemetry.addData("Gear: ", gearStatus);
             //Driver 2 Controls
             if (gamepad1.left_bumper && gamepad1.a && motorLshoot.getPower() == 0 || gamepad2.left_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
-                SystemClock.sleep(150); //Reduce double clicking
+                SystemClock.sleep(100); //Reduce double clicking
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
             }
             if (gamepad1.left_bumper && gamepad1.y || gamepad2.left_bumper && gamepad2.y) {
-                SystemClock.sleep(150); //Reduce double clicking
+                SystemClock.sleep(100); //Reduce double clicking
                 ParticleShootTele();
                 idle();
             }
             if (gamepad1.left_bumper && gamepad1.a && motorLshoot.getPower() > 0 || gamepad2.left_bumper && gamepad2.a && motorLshoot.getPower() > 0) {
-                SystemClock.sleep(150); //Reduce double clicking
+                SystemClock.sleep(100); //Reduce double clicking
                 motorLshoot.setPower(0);
                 motorRshoot.setPower(0);
                 idle();
