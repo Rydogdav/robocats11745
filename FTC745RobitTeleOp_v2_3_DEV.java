@@ -25,10 +25,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.ResetEncoder;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveTeleOp.FieldCentricMecanum;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveTeleOp.motorBLeftv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveTeleOp.motorBRightv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveTeleOp.motorFLeftv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveTeleOp.motorFRightv;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.motorBLeftv;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.motorBRightv;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.motorFLeftv;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.motorFRightv;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Shooting.ParticleShootTele;
 
 
@@ -41,6 +41,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
     public static DcMotor motorBRight = null;
     public static DcMotor motorLshoot = null;
     public static DcMotor motorRshoot = null;
+    public static DcMotor motorThrasher = null;
     public static Servo servoShooterPipe = null;
     public static Servo servoShooterGate = null;
     public static GyroSensor gyroMain = null;
@@ -49,8 +50,9 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
     public OpticalDistanceSensor distanceMain = null;
     public Servo servoMain = null;
 
-    public static double lshootPower = 0.17;
-    public static double rshootPower = 0.23;
+
+    public static double lshootPower = 0.19;
+    public static double rshootPower = 0.25;
     public static double shootpipeMax = 0.01;
     public static double shootpipeMin = 0.04;
     public double shootgateMax = 0.27;
@@ -92,13 +94,14 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
         motorBRight = hardwareMap.dcMotor.get("motorBRight");
         motorLshoot = hardwareMap.dcMotor.get("motorLshoot");
         motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
+        //motorThrasher = hardwareMap.dcMotor.get("motorThrasher");
         servoShooterPipe = hardwareMap.servo.get("servoShooterPipe");
         servoShooterGate = hardwareMap.servo.get("servoShooterGate");
         motorFLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLshoot.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
         gyroMain = hardwareMap.gyroSensor.get("gyroMain");
@@ -150,17 +153,17 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
             telemetry.addData("Gear: ", gearStatus);
             //Driver 2 Controls
             if (gamepad1.left_bumper && gamepad1.a && motorLshoot.getPower() == 0 || gamepad2.left_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
-                SystemClock.sleep(100); //Reduce double clicking
+                SystemClock.sleep(150); //Reduce double clicking
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
             }
             if (gamepad1.left_bumper && gamepad1.y || gamepad2.left_bumper && gamepad2.y) {
-                SystemClock.sleep(100); //Reduce double clicking
+                SystemClock.sleep(150); //Reduce double clicking
                 ParticleShootTele();
                 idle();
             }
             if (gamepad1.left_bumper && gamepad1.a && motorLshoot.getPower() > 0 || gamepad2.left_bumper && gamepad2.a && motorLshoot.getPower() > 0) {
-                SystemClock.sleep(100); //Reduce double clicking
+                SystemClock.sleep(150); //Reduce double clicking
                 motorLshoot.setPower(0);
                 motorRshoot.setPower(0);
                 idle();
@@ -171,6 +174,10 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
                 SystemClock.sleep(2000);
                 servoShooterGate.setPosition(shootgateMax);
             }
+            /*if (gamepad1.left_bumper && gamepad1.b) {
+                SystemClock.sleep(150); // Reduces double clicking
+                motorThrasher.setPower(.17);
+            }*/
 
             //get driver joystick input
             if(robotName == "Slappy") {
