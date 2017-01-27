@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode;
 
 import android.os.SystemClock;
@@ -19,8 +18,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static android.os.SystemClock.sleep;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.ASSMove;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.AllStop;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Fwd;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.HeadingTurn;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.LinearMove;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Xcurr;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Ycurr;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Fwd;
@@ -30,7 +32,10 @@ import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorFLe
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorBLeft;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorFRight;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorBRight;
-import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.gyroMain;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorLshoot;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorRshoot;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.servoShooterPipe;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.servoShooterGate;
 
 @Autonomous(name="Auto v2.1 CLEAN DEV", group="Autonomous")
 
@@ -44,11 +49,16 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
 
     public OpticalDistanceSensor distanceMainF = null;
     public OpticalDistanceSensor distanceMainB = null;
+    public static GyroSensor gyroMainAuto = null;
 
     public double motorFLeftPower = 0;
     public double motorBLeftPower = 0;
     public double motorFRightPower = 0;
     public double motorBRightPower = 0;
+
+    public static boolean gearInversion = false;
+    public static boolean devMode = false;
+    public String robotName = "Null";
 
     final static int WHEEL_DIAMETER = 4;     //Diameter of the wheel in inches
     final static double WHEEL_DIAMETER_MM = WHEEL_DIAMETER * (25.4);
@@ -87,19 +97,31 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
 
             if (gamepad1.y && gamepad1.left_bumper ||
                     gamepad2.y && gamepad2.left_bumper) startingPosition = "C";
-
+            if (gamepad1.a || gamepad2.a) {
+                gearInversion = true;
+                robotName = "Slappy";
+            }
+            if (gamepad1.b || gamepad2.b){
+                gearInversion = false;
+                robotName = "Sloppy";
+            }
             if ((gamepad1.right_bumper && gamepad1.left_bumper) ||
                     (gamepad2.right_bumper && gamepad2.left_bumper))
                 selectionConfirmed = true;
+            if (gamepad1.right_stick_button && gamepad1.left_stick_button) {
+                devMode = true;
+            }
 
             telemetry.addData("Alliance ", Alliance);
             telemetry.addData("Starting Position ", startingPosition);
+            telemetry.addData("Robot", robotName);
+            telemetry.addLine("Press both bumpers when done!");
+            if(devMode) telemetry.addLine("DevMode Activated");
             telemetry.update();
             idle();
         } while (!selectionConfirmed);
-
-        telemetry.addData("Locked in", Alliance, startingPosition);
-        telemetry.addData("Color Value", distanceMainF.getLightDetected());
+        telemetry.clearAll();
+        telemetry.addData("Locked in", Alliance, startingPosition, robotName);
         telemetry.update();
         idle();
     }
@@ -141,51 +163,111 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         motorFRight = hardwareMap.dcMotor.get("motorFRight");
         motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
         motorBRight = hardwareMap.dcMotor.get("motorBRight");
-        gyroMain = hardwareMap.gyroSensor.get("gyroMain");
-        motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLshoot = hardwareMap.dcMotor.get("motorLshoot");
+        motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
+        servoShooterPipe = hardwareMap.servo.get("servoShooterPipe");
+        servoShooterGate = hardwareMap.servo.get("servoShooterGate");
+        gyroMainAuto = hardwareMap.gyroSensor.get("gyroMain");
         motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
         distanceMainF = hardwareMap.opticalDistanceSensor.get("distanceMainF");
         distanceMainB = hardwareMap.opticalDistanceSensor.get("distanceMainB");
         getAutonomousParameters();
+        gyroMainAuto.calibrate();
+        //coordinateSet();
         waitForStart();
-        coordinateSet();
+        /*Xcurr = 0;
+        Ycurr = 0;
         AutonInstructions();
+        LinearMove(609.6, false, true);*/
+        SystemClock.sleep(2000);
+        ParticleShootAuton();
         idle();
     }
     public void AutonInstructions(){
-        if (Alliance == "Blue") {
-            if (startingPosition == "A");
-            Fwd(-838,-1179,0,true);
-            ParticleShootAuton();
-            Fwd(1409,0,0,true);
-
-            if (startingPosition == "B");
-            Fwd(-229,-456,0,true);
-            ParticleShootAuton();
-            Fwd(1409,0,0,true);
-
-            if (startingPosition == "C");
-            Fwd(381,-951,0,true);
-            ParticleShootAuton();
-            Fwd(1404,0,0,true);
+        if (Alliance == "Blue" && devMode == false) {
+            if (startingPosition == "A") {
+                Fwd(-838, -1179, 0, true, gearInversion);
+                SystemClock.sleep(100);
+                Fwd(60, -670, 0 ,true, gearInversion);
+                if (robotName == "Slappy") ParticleShootAuton();
+                SystemClock.sleep(100);
+                Fwd(1409, 0, 0, true, gearInversion);
+            }
+            if (startingPosition == "B") {
+                Fwd(-229, -456, 0, true, gearInversion);
+                SystemClock.sleep(100);
+                Fwd(60, -670, 0 ,true, gearInversion);
+                if (robotName == "Slappy") ParticleShootAuton();
+                SystemClock.sleep(100);
+                Fwd(1409, 0, 0, true, gearInversion);
+            }
+            if (startingPosition == "C") {
+                Fwd(381, -951, 0, true, gearInversion);
+                SystemClock.sleep(100);
+                Fwd(60, -670, 0 ,true, gearInversion);
+                if (robotName == "Slappy") ParticleShootAuton();
+                SystemClock.sleep(100);
+                Fwd(1404, 0, 0, true, gearInversion);
+            }
         }
-        if (Alliance == "Red")
-            if (startingPosition == "A")
-                Fwd(838,-1179,0,true);
-        ParticleShootAuton();
-        Fwd(-1409,0,0,true);
-
-        if (startingPosition == "B")
-            Fwd(1179,838,0,true);
-        ParticleShootAuton();
-        Fwd(0,-1409,0,true);
-
-        if (startingPosition == "C")
-            Fwd(229,-456,0,true);
-        ParticleShootAuton();
-        Fwd(-1404,0,0,true);
-
+        if (Alliance == "Red" && devMode == false) {
+            if (startingPosition == "A") {
+                Fwd(838, -1179, 0, true, gearInversion);
+                SystemClock.sleep(100);
+                Fwd(-60, -670, 0 ,true, gearInversion);
+                if (robotName == "Slappy") ParticleShootAuton();
+                SystemClock.sleep(100);
+                Fwd(-1409, 0, 0, true, gearInversion);
+            }
+            if (startingPosition == "B") {
+                Fwd(1179, 838, 0, true, gearInversion);
+                SystemClock.sleep(100);
+                Fwd(-60, -670, 0 ,true, gearInversion);
+                if (robotName == "Slappy") ParticleShootAuton();
+                SystemClock.sleep(100);
+                Fwd(0, -1409, 0, true, gearInversion);
+            }
+            if (startingPosition == "C") {
+                Fwd(229, -456, 0, true, gearInversion);
+                SystemClock.sleep(100);
+                Fwd(-60, -670, 0 ,true, gearInversion);
+                if (robotName == "Slappy") ParticleShootAuton();
+                SystemClock.sleep(100);
+                Fwd(-1404, 0, 0, true, gearInversion);
+            }
+            if(devMode){
+                telemetry.addLine("Stage 1");
+                telemetry.update();
+                HeadingTurn(180, gearInversion);
+                SystemClock.sleep(100);
+                HeadingTurn(0, gearInversion);
+                SystemClock.sleep(10000);
+                telemetry.addLine("Stage 1 Complete");
+                telemetry.update();
+                SystemClock.sleep(1000);
+                telemetry.addLine("Stage 2");
+                telemetry.update();
+                ASSMove(2000, true, gearInversion);
+                SystemClock.sleep(500);
+                ASSMove(2000, false, gearInversion);
+                telemetry.addLine("Stage 2 Complete");
+                telemetry.update();
+                SystemClock.sleep(1000);
+                telemetry.addLine("Stage 3");
+                telemetry.update();
+                Fwd(381, -951, 0, true, gearInversion);
+                SystemClock.sleep(500);
+                Fwd(0, 0, 180, true, gearInversion);
+                SystemClock.sleep(500);
+                Fwd(381, -1561, 0, true, gearInversion);
+                SystemClock.sleep(10000);
+                telemetry.addLine("Stage 3 Complete");
+                telemetry.addLine("devMode Run Complete!");
+                telemetry.update();
+            }
+        }
     }
     public void LineFollower() {
         final double PERFECT_COLOR_VALUE = .825;
@@ -196,62 +278,62 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         boolean lineFoundB = false;
         String codePosition = "Nowhere";
         telemetry.setMsTransmissionInterval(250);
-            distanceMainF.enableLed(true);
-            do {
+        distanceMainF.enableLed(true);
+        do {
+            correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
+            correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+
+            if (correctionA < 0) {
+                lineFound = true;
                 correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
                 correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+                codePosition = "Line found";
+            }
 
-                if (correctionA < 0) {
-                    lineFound = true;
-                    correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
-                    correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
-                    codePosition = "Line found";
-                }
-
-                if (!lineFound){
-                    motorFLeft.setPower(MOTOR_BASE_POWER);
-                    motorBLeft.setPower(MOTOR_BASE_POWER);
-                    motorFRight.setPower(MOTOR_BASE_POWER);
-                    motorBRight.setPower(MOTOR_BASE_POWER);
-                    correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
-                    correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
-                    codePosition = "Rollin'";
-                }
-                if(lineFound) {
-                    motorFLeftPower = -.1;
-                    motorBLeftPower = -.1;
-                    motorFRightPower = .1;
-                    motorBRightPower = .1;
-                    correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
-                    correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
-                    codePosition = "Line found spin";
-                }
-                if(correctionB < 0){
-                    lineFoundB = true;
-                    correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
-                    correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
-                }
+            if (!lineFound){
+                motorFLeft.setPower(MOTOR_BASE_POWER);
+                motorBLeft.setPower(MOTOR_BASE_POWER);
+                motorFRight.setPower(MOTOR_BASE_POWER);
+                motorBRight.setPower(MOTOR_BASE_POWER);
+                correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
+                correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+                codePosition = "Rollin'";
+            }
+            if(lineFound) {
+                motorFLeftPower = -.1;
+                motorBLeftPower = -.1;
+                motorFRightPower = .1;
+                motorBRightPower = .1;
+                correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
+                correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+                codePosition = "Line found spin";
+            }
+            if(correctionB < 0){
+                lineFoundB = true;
+                correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
+                correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+            }
+            if(lineFoundB){
+                AllStop();
+                SystemClock.sleep(500);
                 if(lineFoundB){
-                    AllStop();
-                    SystemClock.sleep(500);
-                    if(lineFoundB){
                     motorFLeft.setPower(MOTOR_BASE_POWER - correctionA);
                     motorBLeft.setPower(MOTOR_BASE_POWER - correctionA);
                     motorFRight.setPower(MOTOR_BASE_POWER);
                     motorBRight.setPower(MOTOR_BASE_POWER);
-                    }else
+                } else
                     motorFLeft.setPower(MOTOR_BASE_POWER);
-                    motorBLeft.setPower(MOTOR_BASE_POWER);
-                    motorFRight.setPower(MOTOR_BASE_POWER - correctionA);
-                    motorBRight.setPower(MOTOR_BASE_POWER - correctionA);
-                    codePosition = "Turning with Corresction";
-                }
-                idle();
-                telemetry.addData("Color Value", distanceMainF.getLightDetected());
-                telemetry.addData("CorrectionA", correctionA);
-                telemetry.addData("CorrectionB", correctionB);
-                telemetry.addLine(codePosition);
-                telemetry.update();
-            }while(!isStopRequested());
-        }
+                motorBLeft.setPower(MOTOR_BASE_POWER);
+                motorFRight.setPower(MOTOR_BASE_POWER - correctionA);
+                motorBRight.setPower(MOTOR_BASE_POWER - correctionA);
+                codePosition = "Turning with Corresction";
+            }
+            idle();
+            telemetry.addData("Color Value", distanceMainF.getLightDetected());
+            telemetry.addData("CorrectionA", correctionA);
+            telemetry.addData("CorrectionB", correctionB);
+            telemetry.addLine(codePosition);
+            telemetry.update();
+        }while(!isStopRequested());
     }
+}
