@@ -183,6 +183,7 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         LinearMove(609.6, false, true);*/
         SystemClock.sleep(2000);
         ParticleShootAuton();
+        SystemClock.sleep(2000);
         idle();
     }
     public void AutonInstructions(){
