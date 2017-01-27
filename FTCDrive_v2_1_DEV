@@ -394,8 +394,8 @@ public class FTC745Drive_v2_1_DEV {
             double rshootPower = 0.3;
             double shootpipeMax = 0.11;
             double shootpipeMin = 0.04;
-            double shootgateMax = 0.27;
-            double shootgateMin = 0.75;
+            double shootgateMin = 0.27;
+            double shootgateMax = 0.75;
             if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
@@ -404,10 +404,6 @@ public class FTC745Drive_v2_1_DEV {
             servoShooterPipe.setPosition(shootpipeMax);
             SystemClock.sleep(1000);
             servoShooterPipe.setPosition(shootpipeMin);
-            SystemClock.sleep(500);
-            servoShooterGate.setPosition(shootgateMin);
-            SystemClock.sleep(500);
-            servoShooterGate.setPosition(shootgateMax);
         }
     }
 }
