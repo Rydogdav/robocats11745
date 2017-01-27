@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV;
+
 import static org.firstinspires.ftc.teamcode.FTC745RobitShootTestv1_0.servoShooterGate;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.Forward;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.Kf;
@@ -23,23 +25,86 @@ import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorFRi
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorLshoot;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorRshoot;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.servoShooterPipe;
+import static org.firstinspires.ftc.teamcode.FTC745RobitAutonomous_v2_1_CLEAN_DEV.gyroMainAuto;
 
 
 public class FTC745Drive_v2_1_DEV {
-    public abstract static class DriveTeleOp extends LinearOpMode {
-        public static double motorFLeftv;
-        public static double motorFRightv;
-        public static double motorBLeftv;
-        public static double motorBRightv;
-        public static double motorFLeftFwd;
-        public static double motorFRightFwd;
-        public static double motorBLeftFwd;
-        public static double motorBRightFwd;
+    public static double motorFLeftv;
+    public static double motorFRightv;
+    public static double motorBLeftv;
+    public static double motorBRightv;
+    public static double motorFLeftFwd;
+    public static double motorFRightFwd;
+    public static double motorBLeftFwd;
+    public static double motorBRightFwd;
 
+    static double Offset = 0.23;
+    static double motorFLeftAdj = 0.95;
+    static double motorFRightAdj = 1;
+    static double motorBRightAdj = 0.95;
+    static double motorBLeftAdj = 1.3;
+    public static void motorAdjustments(){
+        if (motorFLeftv != 0) {
+            motorFLeftv *= motorFLeftFwd * motorFLeftAdj;
+        }
+        if (motorFRightv != 0) {
+            motorFRightv *= motorFRightFwd * motorFRightAdj;
+        }
+        if (motorBLeftv != 0) {
+            motorBLeftv *= motorBLeftFwd * motorBLeftAdj;
+        }
+        if (motorBRightv != 0) {
+            motorBRightv *= motorBRightFwd * motorBRightAdj;
+        }
+        /*
+        if (motorFLeftv != 0) {
+            motorFLeftv *= motorFLeftAdj;
+        }
+        if (motorBRightv != 0) {
+            motorBRightv *= motorBRightAdj;
+        }
+        if (motorFRightv != 0) {
+            motorFRightv *= motorFRightAdj;
+        }
+        if (motorBLeftv != 0) {
+            motorBLeftv *= motorBLeftAdj;
+        }
+        */
+        if (motorFLeft.getDirection() == DcMotorSimple.Direction.REVERSE) {
+            motorFLeftFwd = 1 - Offset;
+        }
+        if (motorFRight.getDirection() == DcMotorSimple.Direction.REVERSE) {
+            motorFRightFwd = 1 - Offset;
+        }
+        if (motorBLeft.getDirection() == DcMotorSimple.Direction.REVERSE) {
+            motorBLeftFwd = 1 - Offset;
+        }
+        if (motorBRight.getDirection() == DcMotorSimple.Direction.REVERSE) {
+            motorBRightFwd = 1 - Offset;
+        }
+        if (motorFLeft.getDirection() == DcMotorSimple.Direction.FORWARD) {
+            motorFLeftFwd = 1 + Offset;
+        }
+        if (motorFRight.getDirection() == DcMotorSimple.Direction.FORWARD) {
+            motorFRightFwd = 1 + Offset;
+        }
+        if (motorBLeft.getDirection() == DcMotorSimple.Direction.FORWARD) {
+            motorBLeftFwd = 1 + Offset;
+        }
+        if (motorBRight.getDirection() == DcMotorSimple.Direction.FORWARD) {
+            motorBRightFwd = 1 + Offset;
+        }
+    }
+    public abstract static class DriveTeleOp extends LinearOpMode {
 
         public static void FieldCentricMecanum(double North, double East, double TurnCW) {
-            double strfOffset = 0.23;
-            double fwdRevOffset = 0.95;
+            boolean firstRun = false;
+            if (!firstRun){
+                motorFLeftv = 0; //Clear the global variables on the first run, just in case.
+                motorFRightv = 0;
+                motorBRightv = 0;
+                motorBLeftv = 0;
+            }
             //Convert from field-centric inputs to robot-centric commands
             currentHeading = gyroMain.getHeading();
             currentHeading = 0;
@@ -57,55 +122,8 @@ public class FTC745Drive_v2_1_DEV {
             motorBLeftv = +Forward + TurnCW - Strafe;
             motorBRightv = +Forward - TurnCW + Strafe;
 
-            if (motorFLeftv < 0) {
-                motorFLeftv = motorFLeftv * motorFLeftFwd;
-            }
-            if (motorFRightv < 0) {
-                motorFRightv = motorFRightv * motorFRightFwd;
-            }
-            if (motorBLeftv < 0) {
-                motorBLeftv = motorBLeftv * motorBLeftFwd;
-            }
-            if (motorBRightv < 0) {
-                motorBRightv = motorBRightv * motorBRightFwd;
-            }
-            if (motorFLeftv != 0) {
-                motorFLeftv = motorFLeftv * 0.95;
-            }
-            if (motorBRightv != 0) {
-                motorBRightv = motorBRightv * 0.95;
-            }
-            if (motorFRightv != 0) {
+            motorAdjustments();
 
-            }
-            if (motorBLeftv != 0) {
-                motorBLeftv = motorBLeftv * 1.3;
-            }
-
-            if (motorFLeft.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                motorFLeftFwd = 1 - strfOffset;
-            }
-            if (motorFRight.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                motorFRightFwd = 1 - strfOffset;
-            }
-            if (motorBLeft.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                motorBLeftFwd = 1 - strfOffset;
-            }
-            if (motorBRight.getDirection() == DcMotorSimple.Direction.REVERSE) {
-                motorBRightFwd = 1 - strfOffset;
-            }
-            if (motorFLeft.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                motorFLeftFwd = 1 + strfOffset;
-            }
-            if (motorFRight.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                motorFRightFwd = 1 + strfOffset;
-            }
-            if (motorBLeft.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                motorBLeftFwd = 1 + strfOffset;
-            }
-            if (motorBRight.getDirection() == DcMotorSimple.Direction.FORWARD) {
-                motorBRightFwd = 1 + strfOffset;
-            }
             //find maximum input
             double maxInput = Math.abs(motorFLeftv);
             if (Math.abs(motorFRightv) > maxInput) maxInput = Math.abs(motorFRightv);
@@ -120,6 +138,7 @@ public class FTC745Drive_v2_1_DEV {
                 motorBLeftv = maxMotorPower * motorBLeftv / maxInput;
                 motorBRightv = maxMotorPower * motorBRightv / maxInput;
             }
+            firstRun = true;
         }
     }
 
@@ -132,39 +151,6 @@ public class FTC745Drive_v2_1_DEV {
 
         final static double ROBOT_TURN_CIRCLE_RADIUS = 7.625;
         final static double ROBOT_TURN_CURCUMFERECE = ROBOT_TURN_CIRCLE_RADIUS * Math.PI * 25.4;
-
-        public static void AllStop() {
-            motorBLeft.setPower(0);
-            motorBRight.setPower(0);
-            motorFLeft.setPower(0);
-            motorFRight.setPower(0);
-        }
-
-        private static void HeadingTurn(double HEADING) {
-            boolean move = true;
-            do {
-                Thetacurr = gyroMain.getHeading();
-                if (HEADING <= 180 && Thetacurr >= 180) {
-                    if (HEADING != Thetacurr) {
-                        motorFLeft.setPower(-0.2); //Runs to position at this power
-                        motorBLeft.setPower(-0.2);
-                        motorFRight.setPower(0.2);
-                        motorBRight.setPower(0.2);
-                    } else {
-                        AllStop();
-                    }
-                } else {
-                    if (HEADING != Thetacurr) {
-                        motorFLeft.setPower(0.2); //Runs to position at this power
-                        motorBLeft.setPower(0.2);
-                        motorFRight.setPower(-0.2);
-                        motorBRight.setPower(-0.2);
-                    } else {
-                        AllStop();
-                    }
-                }
-            } while (move);
-        }
 
         public static void ResetEncoder() {
             motorFLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -183,7 +169,45 @@ public class FTC745Drive_v2_1_DEV {
             motorBRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        public static void LinearMove(double DISTANCE, boolean FORWARDS) {
+        public static void AllStop() {
+            motorBLeft.setPower(0);
+            motorBRight.setPower(0);
+            motorFLeft.setPower(0);
+            motorFRight.setPower(0);
+        }
+
+        public static void HeadingTurn(double HEADING, boolean gearInversion) {
+            boolean move = true;
+            int gearInversionInt = 1;
+            if (gearInversion) gearInversionInt = -1;
+            do {
+                Thetacurr = gyroMainAuto.getHeading();
+                if (HEADING < 180 && Thetacurr > 180) {
+                    if (HEADING != Thetacurr) {
+                        motorFLeft.setPower(-0.15 * gearInversionInt); //Runs to position at this power
+                        motorBLeft.setPower(-0.15 * gearInversionInt);
+                        motorFRight.setPower(0.15 * gearInversionInt);
+                        motorBRight.setPower(0.15 * gearInversionInt);
+                    } else {
+                        AllStop();
+                        move = !move;
+                    }
+                } else {
+                    if (HEADING != Thetacurr) {
+                        motorFLeft.setPower(0.15 * gearInversionInt); //Runs to position at this power
+                        motorBLeft.setPower(0.15 * gearInversionInt);
+                        motorFRight.setPower(-0.15 * gearInversionInt);
+                        motorBRight.setPower(-0.15 * gearInversionInt);
+                    } else {
+                        AllStop();
+                        move = !move;
+                    }
+                }
+            } while (move);
+        }
+
+
+        public static void LinearMove(double DISTANCE, boolean FORWARDS, boolean gearInversion) {
             final double ROTATIONS = DISTANCE / CIRCUMFERENCE;
             final double COUNTS = ENCODER_CPR * ROTATIONS * GEAR_RATIO;
             int DIRECTION_MULTIPLIER;
@@ -194,6 +218,7 @@ public class FTC745Drive_v2_1_DEV {
             } else {
                 DIRECTION_MULTIPLIER = -1;
             }
+            if (gearInversion) DIRECTION_MULTIPLIER *= -1;
             motorFLeft.setTargetPosition((int) COUNTS); //Sets position in counts
             motorFRight.setTargetPosition((int) COUNTS);
             motorBLeft.setTargetPosition((int) COUNTS);
@@ -204,25 +229,29 @@ public class FTC745Drive_v2_1_DEV {
             motorBLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorBRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            motorFLeft.setPower(DIRECTION_MULTIPLIER * 0.5 * DIRECTION_MULTIPLIER);
-            motorFRight.setPower(DIRECTION_MULTIPLIER * 0.5 * DIRECTION_MULTIPLIER);
-            motorBLeft.setPower(DIRECTION_MULTIPLIER * 0.5 * DIRECTION_MULTIPLIER);
-            motorBRight.setPower(DIRECTION_MULTIPLIER * 0.5 * DIRECTION_MULTIPLIER);
+            motorFLeft.setPower(DIRECTION_MULTIPLIER * 0.5);
+            motorFRight.setPower(DIRECTION_MULTIPLIER * 0.5);
+            motorBLeft.setPower(DIRECTION_MULTIPLIER * 0.5);
+            motorBRight.setPower(DIRECTION_MULTIPLIER * 0.5);
         }
 
         public static double HEADING_TARGET;
         public static double GYRO_HEADING_NEW;
 
-        public static void ASSMove(double DISTANCE, boolean FORWARDS) { //"AutomatedStabilitySystemMove"
-            double HEADING_DELTA;
+        public static void ASSMove(double DISTANCE, boolean FORWARDS, boolean gearInversion) { //"AutomatedStabilitySystemMove"
+             double HEADING_DELTA;
             if (Thetacurr > 180) {
                 HEADING_TARGET = Thetacurr - 180;
+                SystemClock.sleep(100);
             } else {
                 HEADING_TARGET = Thetacurr + 180;
+                SystemClock.sleep(100);
             }
             int DIRECTION_MULTIPLIER;
-            double POWER_RIGHT = 0.5;
-            double POWER_LEFT = 0.5;
+            motorFLeftv = 0.4;
+            motorFRightv = 0.4;
+            motorBLeftv = 0.4;
+            motorBRightv = 0.4;
             final double ROTATIONS = DISTANCE / CIRCUMFERENCE;
             final double COUNTS = ENCODER_CPR * ROTATIONS * GEAR_RATIO;
             if (FORWARDS) {
@@ -230,6 +259,7 @@ public class FTC745Drive_v2_1_DEV {
             } else {
                 DIRECTION_MULTIPLIER = -1;
             }
+            if (gearInversion) DIRECTION_MULTIPLIER *= -1;
             boolean move = true;
             motorFLeft.setTargetPosition((int) COUNTS); //Sets position in counts
             motorFRight.setTargetPosition((int) COUNTS);
@@ -241,7 +271,7 @@ public class FTC745Drive_v2_1_DEV {
             motorBLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motorBRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             do {
-
+                Thetacurr = gyroMainAuto.getHeading();
                 if (Thetacurr > 180) {
                     GYRO_HEADING_NEW = Thetacurr - 180;
                 } else {
@@ -249,23 +279,25 @@ public class FTC745Drive_v2_1_DEV {
                 }
                 if (GYRO_HEADING_NEW < HEADING_TARGET) {//If Statement logic is inverted due to the headings being set to the 90-270 side instead of the 270-90 side.
                     HEADING_DELTA = (HEADING_TARGET - GYRO_HEADING_NEW) / 10;
-                    POWER_RIGHT = POWER_RIGHT + HEADING_DELTA;
-                    POWER_LEFT = POWER_LEFT;
+                    motorFLeftv =+ HEADING_DELTA;
+                    motorBLeftv =+ HEADING_DELTA;
                 }
                 if (GYRO_HEADING_NEW > HEADING_TARGET) {
                     HEADING_DELTA = (GYRO_HEADING_NEW - HEADING_TARGET) / 10;
-                    POWER_LEFT = POWER_LEFT + HEADING_DELTA;
-                    POWER_RIGHT = POWER_RIGHT;
+                    motorFRightv =+ HEADING_DELTA;
+                    motorBRightv =+ HEADING_DELTA;
                 }
                 if (Thetacurr == HEADING_TARGET) {
-                    POWER_LEFT = 0.5;
-                    POWER_RIGHT = 0.5;
+                    motorFLeftv = 0.4;
+                    motorFRightv = 0.4;
+                    motorBLeftv = 0.4;
+                    motorBRightv = 0.4;
                 }
-                motorFLeft.setPower(DIRECTION_MULTIPLIER * POWER_LEFT);
-                motorFRight.setPower(DIRECTION_MULTIPLIER * POWER_RIGHT);
-                motorBLeft.setPower(DIRECTION_MULTIPLIER * POWER_LEFT);
-                motorBRight.setPower(DIRECTION_MULTIPLIER * POWER_RIGHT);
-                Thetacurr = gyroMain.getHeading();
+                motorFLeft.setPower(DIRECTION_MULTIPLIER * motorFLeftv);
+                motorFRight.setPower(DIRECTION_MULTIPLIER * motorFRightv);
+                motorBLeft.setPower(DIRECTION_MULTIPLIER * motorBLeftv);
+                motorBRight.setPower(DIRECTION_MULTIPLIER * motorBRightv);
+                SystemClock.sleep(50);
 
                 if (motorFLeft.getCurrentPosition() == COUNTS && motorFRight.getCurrentPosition() == COUNTS) {
                     move = false;
@@ -278,51 +310,75 @@ public class FTC745Drive_v2_1_DEV {
         public static int Ycurr;
         public static int Thetacurr;
 
-        public static void Fwd(int Xnew, int Ynew, int Headingfinal, boolean Forwards) {
+        public static void Fwd(int Xnew, int Ynew, int Headingfinal, boolean Forwards, boolean gearInversion) {
             double Distance = 0;
             double Thetadelta = 0;
-            if (Xnew != Xcurr && Ynew != Ycurr) {
-                boolean Aligned;
-                int Xdelta = Xnew - Xcurr;
-                int Ydelta = Ynew - Ycurr;
-                Distance = Math.hypot(Xdelta, Ydelta);
-                Thetadelta = Math.atan2(Ydelta, Xdelta);
-                Thetacurr = gyroMain.getHeading();
-                if (Thetacurr > Thetadelta) {
-                    HeadingTurn(Thetacurr - Thetadelta);
-                } else {
-                    HeadingTurn(Thetadelta - Thetacurr);
-                }
+            int Xdelta = Xnew - Xcurr;
+            int Ydelta = Ynew - Ycurr;
+                if (Xdelta != 0 && Ydelta != 0) {
+                    Distance = Math.hypot(Xdelta, Ydelta);
+                    Thetadelta = Math.atan(Ydelta / Xdelta);
+                    Thetadelta = Math.toDegrees(Thetadelta);
+                    if (Thetadelta > 0){
+                        if (Xnew > 0){
+                            Thetadelta = Math.abs(Thetadelta);
+                        }else {
+                            Thetadelta = Thetadelta + 360;
+                        }
+                    }
+                    Thetacurr = gyroMainAuto.getHeading();
+                    if (Thetacurr > Thetadelta) {
+                        HeadingTurn(Thetacurr - Thetadelta, gearInversion);
+                        SystemClock.sleep(100);
+                    } else {
+                        HeadingTurn(Thetadelta - Thetacurr, gearInversion);
+                        SystemClock.sleep(100);
+                    }
 
-                ASSMove(Distance, Forwards);
-                HeadingTurn(Headingfinal);
-            } else if (Xnew == Xcurr) {
-                if (Thetadelta != Thetacurr) {
-                    if (Forwards) {
-                        HeadingTurn(0);
-                        ASSMove(Distance, true);
-                        HeadingTurn(Headingfinal);
-                    } else {
-                        HeadingTurn(180);
-                        ASSMove(Distance, false);
-                        HeadingTurn(Headingfinal);
+                    ASSMove(Distance, Forwards, gearInversion);
+                    SystemClock.sleep(100);
+                    HeadingTurn(Headingfinal, gearInversion);
+                    SystemClock.sleep(100);
+                } else if (Xdelta == 0) {
+                        if (Ydelta < 0) {
+                            HeadingTurn(0, gearInversion);
+                            SystemClock.sleep(100);
+                            ASSMove(Distance, Forwards, gearInversion);
+                            SystemClock.sleep(100);
+                            HeadingTurn(Headingfinal, gearInversion);
+                            SystemClock.sleep(100);
+                        } else {
+                            HeadingTurn(180, gearInversion);
+                            ASSMove(Distance, Forwards, gearInversion);
+                            SystemClock.sleep(100);
+                            HeadingTurn(Headingfinal, gearInversion);
+                            SystemClock.sleep(100);
+                        }
                     }
-                }
-            } else if (Ynew == Ycurr) {
-                if (Thetadelta != Thetacurr) {
-                    if (Forwards) {
-                        HeadingTurn(90);
-                        ASSMove(Distance, true);
-                        HeadingTurn(Headingfinal);
-                    } else {
-                        HeadingTurn(270);
-                        ASSMove(Distance, false);
-                        HeadingTurn(Headingfinal);
-                    }
+                 else if (Ydelta == 0) {
+                        if (Xdelta < 0) {
+                            HeadingTurn(90, gearInversion);
+                            SystemClock.sleep(100);
+                            ASSMove(Distance, Forwards, gearInversion);
+                            SystemClock.sleep(100);
+                            HeadingTurn(Headingfinal, gearInversion);
+                            SystemClock.sleep(100);
+                        } else {
+                            HeadingTurn(270, gearInversion);
+                            SystemClock.sleep(100);
+                            ASSMove(Distance, Forwards, gearInversion);
+                            SystemClock.sleep(100);
+                            HeadingTurn(Headingfinal, gearInversion);
+                            SystemClock.sleep(100);
+                        }
+                    Xcurr = Xnew;
+                    Ycurr = Ynew;
                 }
             }
         }
-    }
+        public static void FwdShoot(boolean Forwards, boolean gearInversion){
+
+        }
 
     public abstract static class Shooting extends LinearOpMode {
         public static void ParticleShootTele() {
@@ -334,20 +390,24 @@ public class FTC745Drive_v2_1_DEV {
         }
 
         public static void ParticleShootAuton() {
-            double lshootPower = 0.17;
-            double rshootPower = 0.23;
-            double shootpipeMax = 0.1;
+            double lshootPower = 0.24;
+            double rshootPower = 0.3;
+            double shootpipeMax = 0.11;
             double shootpipeMin = 0.04;
             double shootgateMax = 0.27;
             double shootgateMin = 0.75;
             if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
-                SystemClock.sleep(3000);
+                SystemClock.sleep(5000);
             }
             servoShooterPipe.setPosition(shootpipeMax);
             SystemClock.sleep(1000);
             servoShooterPipe.setPosition(shootpipeMin);
+            SystemClock.sleep(500);
+            servoShooterGate.setPosition(shootgateMin);
+            SystemClock.sleep(500);
+            servoShooterGate.setPosition(shootgateMax);
         }
     }
 }
