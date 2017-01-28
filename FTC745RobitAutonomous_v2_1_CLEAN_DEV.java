@@ -28,6 +28,7 @@ import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Driv
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Fwd;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Shooting.ParticleShootAuton;
 
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Shooting.ParticleShootAuton2;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorFLeft;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorBLeft;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorFRight;
@@ -159,31 +160,35 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        getAutonomousParameters();
         motorFLeft = hardwareMap.dcMotor.get("motorFLeft");
         motorFRight = hardwareMap.dcMotor.get("motorFRight");
         motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
         motorBRight = hardwareMap.dcMotor.get("motorBRight");
-        motorLshoot = hardwareMap.dcMotor.get("motorLshoot");
-        motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
-        servoShooterPipe = hardwareMap.servo.get("servoShooterPipe");
-        servoShooterGate = hardwareMap.servo.get("servoShooterGate");
+        if(robotName == "Slappy") {
+            motorLshoot = hardwareMap.dcMotor.get("motorLshoot");
+            motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
+            servoShooterPipe = hardwareMap.servo.get("servoShooterPipe");
+            servoShooterGate = hardwareMap.servo.get("servoShooterGate");
+            motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
         gyroMainAuto = hardwareMap.gyroSensor.get("gyroMain");
         motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
         distanceMainF = hardwareMap.opticalDistanceSensor.get("distanceMainF");
         distanceMainB = hardwareMap.opticalDistanceSensor.get("distanceMainB");
-        getAutonomousParameters();
         gyroMainAuto.calibrate();
         //coordinateSet();
         waitForStart();
         /*Xcurr = 0;
-        Ycurr = 0;
-        AutonInstructions();
-        LinearMove(609.6, false, true);*/
+        Ycurr = 0;*/
+        ASSMove(840, false, gearInversion);
+        if(robotName == "Slappy") ParticleShootAuton();
         SystemClock.sleep(2000);
-        ParticleShootAuton();
-        SystemClock.sleep(2000);
+        if(robotName == "Slappy") ParticleShootAuton2();
+        ASSMove(610, false, gearInversion);
+        telemetry.addLine("Done");
+        telemetry.update();
         idle();
     }
     public void AutonInstructions(){
