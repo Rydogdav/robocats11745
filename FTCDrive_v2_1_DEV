@@ -190,6 +190,7 @@ public class FTC745Drive_v2_1_DEV {
                         motorBRight.setPower(0.15 * gearInversionInt);
                     } else {
                         AllStop();
+                        ResetEncoder();
                         move = !move;
                     }
                 } else {
@@ -242,10 +243,10 @@ public class FTC745Drive_v2_1_DEV {
              double HEADING_DELTA;
             if (Thetacurr > 180) {
                 HEADING_TARGET = Thetacurr - 180;
-                SystemClock.sleep(100);
+                ;
             } else {
                 HEADING_TARGET = Thetacurr + 180;
-                SystemClock.sleep(100);
+                ;
             }
             int DIRECTION_MULTIPLIER;
             motorFLeftv = 0.4;
@@ -278,12 +279,12 @@ public class FTC745Drive_v2_1_DEV {
                     GYRO_HEADING_NEW = Thetacurr + 180;
                 }
                 if (GYRO_HEADING_NEW < HEADING_TARGET) {//If Statement logic is inverted due to the headings being set to the 90-270 side instead of the 270-90 side.
-                    HEADING_DELTA = (HEADING_TARGET - GYRO_HEADING_NEW) / 10;
+                    HEADING_DELTA = (HEADING_TARGET - GYRO_HEADING_NEW) / 11;
                     motorFLeftv =+ HEADING_DELTA;
                     motorBLeftv =+ HEADING_DELTA;
                 }
                 if (GYRO_HEADING_NEW > HEADING_TARGET) {
-                    HEADING_DELTA = (GYRO_HEADING_NEW - HEADING_TARGET) / 10;
+                    HEADING_DELTA = (GYRO_HEADING_NEW - HEADING_TARGET) / 11;
                     motorFRightv =+ HEADING_DELTA;
                     motorBRightv =+ HEADING_DELTA;
                 }
@@ -297,13 +298,18 @@ public class FTC745Drive_v2_1_DEV {
                 motorFRight.setPower(DIRECTION_MULTIPLIER * motorFRightv);
                 motorBLeft.setPower(DIRECTION_MULTIPLIER * motorBLeftv);
                 motorBRight.setPower(DIRECTION_MULTIPLIER * motorBRightv);
-                SystemClock.sleep(50);
+                SystemClock.sleep(100);
 
-                if (motorFLeft.getCurrentPosition() == COUNTS && motorFRight.getCurrentPosition() == COUNTS) {
+                if (motorFLeft.getCurrentPosition() >= COUNTS ||
+                    motorBLeft.getCurrentPosition() >= COUNTS ||
+                    motorFRight.getCurrentPosition() >= COUNTS ||
+                    motorBRight.getCurrentPosition() >= COUNTS) {
                     move = false;
                 }
+
             } while (move);
             AllStop();
+            ResetEncoder();
         }
 
         public static int Xcurr;
@@ -329,47 +335,45 @@ public class FTC745Drive_v2_1_DEV {
                     Thetacurr = gyroMainAuto.getHeading();
                     if (Thetacurr > Thetadelta) {
                         HeadingTurn(Thetacurr - Thetadelta, gearInversion);
-                        SystemClock.sleep(100);
                     } else {
                         HeadingTurn(Thetadelta - Thetacurr, gearInversion);
-                        SystemClock.sleep(100);
                     }
 
                     ASSMove(Distance, Forwards, gearInversion);
-                    SystemClock.sleep(100);
+
                     HeadingTurn(Headingfinal, gearInversion);
-                    SystemClock.sleep(100);
+
                 } else if (Xdelta == 0) {
                         if (Ydelta < 0) {
                             HeadingTurn(0, gearInversion);
-                            SystemClock.sleep(100);
+                            ;
                             ASSMove(Distance, Forwards, gearInversion);
-                            SystemClock.sleep(100);
+
                             HeadingTurn(Headingfinal, gearInversion);
-                            SystemClock.sleep(100);
+
                         } else {
                             HeadingTurn(180, gearInversion);
                             ASSMove(Distance, Forwards, gearInversion);
-                            SystemClock.sleep(100);
+
                             HeadingTurn(Headingfinal, gearInversion);
-                            SystemClock.sleep(100);
+
                         }
                     }
                  else if (Ydelta == 0) {
                         if (Xdelta < 0) {
                             HeadingTurn(90, gearInversion);
-                            SystemClock.sleep(100);
+
                             ASSMove(Distance, Forwards, gearInversion);
-                            SystemClock.sleep(100);
+
                             HeadingTurn(Headingfinal, gearInversion);
-                            SystemClock.sleep(100);
+
                         } else {
                             HeadingTurn(270, gearInversion);
-                            SystemClock.sleep(100);
+
                             ASSMove(Distance, Forwards, gearInversion);
-                            SystemClock.sleep(100);
+
                             HeadingTurn(Headingfinal, gearInversion);
-                            SystemClock.sleep(100);
+
                         }
                     Xcurr = Xnew;
                     Ycurr = Ynew;
@@ -394,8 +398,8 @@ public class FTC745Drive_v2_1_DEV {
             double rshootPower = 0.3;
             double shootpipeMax = 0.11;
             double shootpipeMin = 0.04;
-            double shootgateMin = 0.27;
-            double shootgateMax = 0.75;
+            double shootgateMax = 0.27;
+            double shootgateMin = 0.75;
             if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
@@ -404,6 +408,30 @@ public class FTC745Drive_v2_1_DEV {
             servoShooterPipe.setPosition(shootpipeMax);
             SystemClock.sleep(1000);
             servoShooterPipe.setPosition(shootpipeMin);
+            SystemClock.sleep(500);
+            servoShooterGate.setPosition(shootgateMin);
+            SystemClock.sleep(500);
+            servoShooterGate.setPosition(shootgateMax);
+        }
+        public static void ParticleShootAuton2() {
+        double lshootPower = 0.24;
+        double rshootPower = 0.3;
+        double shootpipeMax = 0.11;
+        double shootpipeMin = 0.04;
+        double shootgateMax = 0.27;
+        double shootgateMin = 0.75;
+        if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
+            servoShooterGate.setPosition(shootgateMin);
+            SystemClock.sleep(500);
+            servoShooterGate.setPosition(shootgateMin);
+            motorLshoot.setPower(lshootPower);
+            motorRshoot.setPower(rshootPower);
+            SystemClock.sleep(5000);
+        }
+        servoShooterPipe.setPosition(shootpipeMax);
+        SystemClock.sleep(1000);
+        servoShooterPipe.setPosition(shootpipeMin);
+
         }
     }
 }
