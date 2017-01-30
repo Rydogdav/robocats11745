@@ -170,6 +170,7 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
             motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
             servoShooterPipe = hardwareMap.servo.get("servoShooterPipe");
             servoShooterGate = hardwareMap.servo.get("servoShooterGate");
+            servoShooterGate.setDirection(Servo.Direction.REVERSE);
             motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
         }
         gyroMainAuto = hardwareMap.gyroSensor.get("gyroMain");
@@ -182,11 +183,48 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         waitForStart();
         /*Xcurr = 0;
         Ycurr = 0;*/
-        ASSMove(840, false, gearInversion);
-        if(robotName == "Slappy") ParticleShootAuton();
-        SystemClock.sleep(2000);
-        if(robotName == "Slappy") ParticleShootAuton2();
-        ASSMove(610, false, gearInversion);
+        while (isStopRequested()){
+            motorFLeft.setPower(0);
+            motorBLeft.setPower(0);
+            motorFRight.setPower(0);
+            motorBRight.setPower(0);
+            requestOpModeStop();
+        }
+            LinearMove(800, false, gearInversion);
+        while (isStopRequested()){
+            motorFLeft.setPower(0);
+            motorBLeft.setPower(0);
+            motorFRight.setPower(0);
+            motorBRight.setPower(0);
+            requestOpModeStop();
+        }
+            if(robotName == "Slappy") ParticleShootAuton();
+        while (isStopRequested()){
+            motorFLeft.setPower(0);
+            motorBLeft.setPower(0);
+            motorFRight.setPower(0);
+            motorBRight.setPower(0);
+            requestOpModeStop();
+        }
+        SystemClock.sleep(3000);
+            if(robotName == "Slappy") ParticleShootAuton2();
+        while (isStopRequested()){
+            motorFLeft.setPower(0);
+            motorBLeft.setPower(0);
+            motorFRight.setPower(0);
+            motorBRight.setPower(0);
+            requestOpModeStop();
+        }
+        SystemClock.sleep(3000);
+            LinearMove(650, false, gearInversion);
+        if (isStopRequested()){
+            motorFLeft.setPower(0);
+            motorBLeft.setPower(0);
+            motorFRight.setPower(0);
+            motorBRight.setPower(0);
+            requestOpModeStop();
+        }
+        SystemClock.sleep(3000);
         telemetry.addLine("Done");
         telemetry.update();
         idle();
