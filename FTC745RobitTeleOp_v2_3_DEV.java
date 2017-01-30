@@ -51,8 +51,8 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
     public Servo servoMain = null;
 
 
-    public static double lshootPower = 0.19;
-    public static double rshootPower = 0.25;
+    public static double lshootPower = 0.34;
+    public static double rshootPower = 0.4;
     public static double shootpipeMax = 0.01;
     public static double shootpipeMin = 0.04;
     public double shootgateMax = 0.27;
@@ -101,7 +101,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
         motorBLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorLshoot.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         gyroMain = hardwareMap.gyroSensor.get("gyroMain");
@@ -115,19 +115,18 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
         //recalibrate gyro TAKE OUT WHEN AUTONOMOUS IS WORKING
         gyroMain.calibrate();
         servoShooterPipe.setPosition(shootpipeMin);
-        servoShooterGate.setPosition(shootgateMax);
         boolean selectionConfirm = false;
         String robotName = "NO NAME! A = Slappy, B = Sloppy.";
         telemetry.addLine("Please State Robot Name:");
         telemetry.update();
-        do{
-            if(gamepad1.a || gamepad2.a)robotName = "Slappy";
-            if(gamepad1.b || gamepad2.b)robotName = "Sloppy";
+        do {
+            if (gamepad1.a || gamepad2.a) robotName = "Slappy";
+            if (gamepad1.b || gamepad2.b) robotName = "Sloppy";
             telemetry.addData("Robot Name: ", robotName);
             telemetry.addLine("Press Y When Ready");
             telemetry.update();
-            if(gamepad1.y || gamepad2.y)selectionConfirm = true;
-        }while(selectionConfirm == false);
+            if (gamepad1.y || gamepad2.y) selectionConfirm = true;
+        } while (selectionConfirm == false);
         telemetry.clear();
         telemetry.addData("Status:", "Initialized. Welcome user. v2.3 DEV Active");
         telemetry.update();
@@ -214,7 +213,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
             telemetry.addData("Motor BLeft:", motorBLeft.getCurrentPosition());
             telemetry.update();
             idle();
-        }while(opModeIsActive() && !isStopRequested());
+        } while(opModeIsActive() && !isStopRequested());
         idle();
         requestOpModeStop();
     }
