@@ -29,6 +29,7 @@ import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Driv
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Shooting.ParticleShootAuton;
 
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Shooting.ParticleShootAuton2;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.TurnCW;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorFLeft;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorBLeft;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorFRight;
@@ -206,7 +207,7 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
             motorBRight.setPower(0);
             requestOpModeStop();
         }
-        SystemClock.sleep(3000);
+        SystemClock.sleep(1000);
             if(robotName == "Slappy") ParticleShootAuton2();
         while (isStopRequested()){
             motorFLeft.setPower(0);
