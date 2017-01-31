@@ -26,6 +26,8 @@ import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorLsh
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorRshoot;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.servoShooterPipe;
 import static org.firstinspires.ftc.teamcode.FTC745RobitAutonomous_v2_1_CLEAN_DEV.gyroMainAuto;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.shootpipeMax;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.shootpipeMin;
 
 
 public class FTC745Drive_v2_1_DEV {
@@ -184,10 +186,10 @@ public class FTC745Drive_v2_1_DEV {
                 Thetacurr = gyroMainAuto.getHeading();
                 if (HEADING < 180 && Thetacurr > 180) {
                     if (HEADING != Thetacurr) {
-                        motorFLeft.setPower(-0.15 * gearInversionInt); //Runs to position at this power
-                        motorBLeft.setPower(-0.15 * gearInversionInt);
-                        motorFRight.setPower(0.15 * gearInversionInt);
-                        motorBRight.setPower(0.15 * gearInversionInt);
+                        motorFLeft.setPower(-0.12 * gearInversionInt); //Runs to position at this power
+                        motorBLeft.setPower(-0.12 * gearInversionInt);
+                        motorFRight.setPower(0.12 * gearInversionInt);
+                        motorBRight.setPower(0.12 * gearInversionInt);
                     } else {
                         AllStop();
                         ResetEncoder();
@@ -195,10 +197,10 @@ public class FTC745Drive_v2_1_DEV {
                     }
                 } else {
                     if (HEADING != Thetacurr) {
-                        motorFLeft.setPower(0.15 * gearInversionInt); //Runs to position at this power
-                        motorBLeft.setPower(0.15 * gearInversionInt);
-                        motorFRight.setPower(-0.15 * gearInversionInt);
-                        motorBRight.setPower(-0.15 * gearInversionInt);
+                        motorFLeft.setPower(0.12 * gearInversionInt); //Runs to position at this power
+                        motorBLeft.setPower(0.12 * gearInversionInt);
+                        motorFRight.setPower(-0.12 * gearInversionInt);
+                        motorBRight.setPower(-0.12 * gearInversionInt);
                     } else {
                         AllStop();
                         move = !move;
@@ -388,8 +390,6 @@ public class FTC745Drive_v2_1_DEV {
 
     public abstract static class Shooting extends LinearOpMode {
         public static void ParticleShootTele() {
-            double shootpipeMin = 0.1;
-            double shootpipeMax = 0.04;
             servoShooterPipe.setPosition(shootpipeMin);
             SystemClock.sleep(1000);
             servoShooterPipe.setPosition(shootpipeMax);
@@ -400,12 +400,12 @@ public class FTC745Drive_v2_1_DEV {
             double rshootPower = 0.4;
             double shootpipeMax = 0.1;
             double shootpipeMin = 0.07;
-            double shootgateMax = 0.27;
-            double shootgateMin = 0.70;
+            double shootgateMax = 0.3;
+            double shootgateMin = 0.6;
             if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
-                SystemClock.sleep(6000);
+                SystemClock.sleep(5000);
             }
             servoShooterPipe.setPosition(shootpipeMax);
             SystemClock.sleep(1000);
@@ -415,13 +415,13 @@ public class FTC745Drive_v2_1_DEV {
         double lshootPower = 0.34;
         double rshootPower = 0.4;
         double shootpipeMax = 0.1;
-        double shootpipeMin = 0.7;
-        double shootgateMin = 0.27;
-        double shootgateMax = 0.60;
+        double shootpipeMin = 0.07;
+        double shootgateMin = 0.3;
+        double shootgateMax = 0.6;
         if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
             motorLshoot.setPower(lshootPower);
             motorRshoot.setPower(rshootPower);
-            SystemClock.sleep(6000);
+            SystemClock.sleep(4000);
         }
         servoShooterGate.setPosition(shootgateMin);
         SystemClock.sleep(2000);
