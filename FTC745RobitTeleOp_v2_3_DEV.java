@@ -53,10 +53,10 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
 
     public static double lshootPower = 0.34;
     public static double rshootPower = 0.4;
-    public static double shootpipeMax = 0.01;
-    public static double shootpipeMin = 0.04;
-    public double shootgateMax = 0.27;
-    public double shootgateMin = 0.75;
+    public static double shootpipeMax = 0.09;
+    public static double shootpipeMin = 0.06;
+    public double shootgateMin = 0.47;
+    public double shootgateMax = 0.6;
 
     public double North = 0;
     public double East = 0;
