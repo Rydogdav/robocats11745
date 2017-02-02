@@ -406,10 +406,10 @@ public class FTC745Drive_v2_1_DEV {
             if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
-                SystemClock.sleep(5000);
+                SystemClock.sleep(6000);
             }
             servoShooterPipe.setPosition(shootpipeMax);
-            SystemClock.sleep(1000);
+            SystemClock.sleep(2000);
             servoShooterPipe.setPosition(shootpipeMin);
         }
         public static void ParticleShootAuton2() {
@@ -422,7 +422,7 @@ public class FTC745Drive_v2_1_DEV {
         if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
             motorLshoot.setPower(lshootPower);
             motorRshoot.setPower(rshootPower);
-            SystemClock.sleep(4000);
+            SystemClock.sleep(6000);
         }
         servoShooterGate.setPosition(shootgateMin);
         SystemClock.sleep(2000);
