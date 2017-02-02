@@ -25,7 +25,7 @@ import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorFRi
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorLshoot;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorRshoot;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.servoShooterPipe;
-import static org.firstinspires.ftc.teamcode.FTC745RobitAutonomous_v2_1_CLEAN_DEV.gyroMainAuto;
+import static org.firstinspires.ftc.teamcode.FTC745RobitAutonomous_v2_1_RELEASE.gyroMainAuto;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.shootpipeMax;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.shootpipeMin;
 
@@ -155,6 +155,7 @@ public class FTC745Drive_v2_1_DEV {
         final static double ROBOT_TURN_CURCUMFERECE = ROBOT_TURN_CIRCLE_RADIUS * Math.PI * 25.4;
 
         public static void ResetEncoder() {
+
             motorFLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             motorFRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             motorBLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -181,28 +182,25 @@ public class FTC745Drive_v2_1_DEV {
         public static void HeadingTurn(double HEADING, boolean gearInversion) {
             boolean move = true;
             int gearInversionInt = 1;
+            double speedMultiplier = 1;
+            double smFinder = 0;
             if (gearInversion) gearInversionInt = -1;
             do {
                 Thetacurr = gyroMainAuto.getHeading();
-                if (HEADING < 180 && Thetacurr > 180) {
-                    if (HEADING != Thetacurr) {
-                        motorFLeft.setPower(-0.12 * gearInversionInt); //Runs to position at this power
-                        motorBLeft.setPower(-0.12 * gearInversionInt);
-                        motorFRight.setPower(0.12 * gearInversionInt);
-                        motorBRight.setPower(0.12 * gearInversionInt);
+                if (Thetacurr > HEADING) {
+                    motorFLeft.setPower(-0.3 * gearInversionInt * speedMultiplier); //Runs to position at this power
+                    motorBLeft.setPower(-0.3 * gearInversionInt * speedMultiplier);
+                    motorFRight.setPower(0.3 * gearInversionInt * speedMultiplier);
+                    motorBRight.setPower(0.3 * gearInversionInt * speedMultiplier);
+                } else {
+                    if (HEADING < Thetacurr) {
+                        motorFLeft.setPower(0.3 * gearInversionInt * speedMultiplier); //Runs to position at this power
+                        motorBLeft.setPower(0.3 * gearInversionInt * speedMultiplier);
+                        motorFRight.setPower(-0.3 * gearInversionInt * speedMultiplier);
+                        motorBRight.setPower(-0.3 * gearInversionInt * speedMultiplier);
                     } else {
                         AllStop();
                         ResetEncoder();
-                        move = !move;
-                    }
-                } else {
-                    if (HEADING != Thetacurr) {
-                        motorFLeft.setPower(0.12 * gearInversionInt); //Runs to position at this power
-                        motorBLeft.setPower(0.12 * gearInversionInt);
-                        motorFRight.setPower(-0.12 * gearInversionInt);
-                        motorBRight.setPower(-0.12 * gearInversionInt);
-                    } else {
-                        AllStop();
                         move = !move;
                     }
                 }
@@ -216,6 +214,7 @@ public class FTC745Drive_v2_1_DEV {
             int DIRECTION_MULTIPLIER;
 
             ResetEncoder();
+
             if (FORWARDS == true) {
                 DIRECTION_MULTIPLIER = 1;
             } else {
@@ -243,6 +242,8 @@ public class FTC745Drive_v2_1_DEV {
 
         public static void ASSMove(double DISTANCE, boolean FORWARDS, boolean gearInversion) { //"AutomatedStabilitySystemMove"
              double HEADING_DELTA;
+            Thetacurr = gyroMainAuto.getHeading();
+
             if (Thetacurr > 180) {
                 HEADING_TARGET = Thetacurr - 180;
             } else {
