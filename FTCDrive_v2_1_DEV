@@ -143,7 +143,6 @@ public class FTC745Drive_v2_1_DEV {
             firstRun = true;
         }
     }
-
     public abstract static class DriveAuton extends LinearOpMode {
         final static int WHEEL_DIAMETER = 4;     //Diameter of the wheel in inches
         final static double WHEEL_DIAMETER_MM = WHEEL_DIAMETER * (25.4);
@@ -241,7 +240,7 @@ public class FTC745Drive_v2_1_DEV {
         public static double GYRO_HEADING_NEW;
 
         public static void ASSMove(double DISTANCE, boolean FORWARDS, boolean gearInversion) { //"AutomatedStabilitySystemMove"
-             double HEADING_DELTA;
+            double HEADING_DELTA;
             Thetacurr = gyroMainAuto.getHeading();
 
             if (Thetacurr > 180) {
@@ -285,7 +284,7 @@ public class FTC745Drive_v2_1_DEV {
                     GYRO_HEADING_NEW = Thetacurr - 180;
                 } else {
                     GYRO_HEADING_NEW = Thetacurr + 180;
-            }
+                }
                 if (GYRO_HEADING_NEW < HEADING_TARGET) {//If Statement logic is inverted due to the headings being set to the 90-270 side instead of the 270-90 side.
                     HEADING_DELTA = (HEADING_TARGET - GYRO_HEADING_NEW) / 10;
                     motorFLeftv =+ HEADING_DELTA;
@@ -321,73 +320,82 @@ public class FTC745Drive_v2_1_DEV {
         public static int Ycurr;
         public static int Thetacurr;
 
+        public static void MecanumAuton() {
+            motorFLeft.setPower(.5);
+            motorBRight.setPower(.5);
+            motorBLeft.setPower(-.5);
+            motorFRight.setPower(-.5);
+        }
+
+
+
         public static void Fwd(int Xnew, int Ynew, int Headingfinal, boolean Forwards, boolean gearInversion) {
             double Distance = 0;
             double Thetadelta = 0;
             int Xdelta = Xnew - Xcurr;
             int Ydelta = Ynew - Ycurr;
-                if (Xdelta != 0 && Ydelta != 0) {
-                    Distance = Math.hypot(Xdelta, Ydelta);
-                    Thetadelta = Math.atan(Ydelta / Xdelta);
-                    Thetadelta = Math.toDegrees(Thetadelta);
-                    if (Thetadelta > 0){
-                        if (Xnew > 0){
-                            Thetadelta = Math.abs(Thetadelta);
-                        } else {
-                            Thetadelta = Thetadelta + 360;
-                        }
-                    }
-                    Thetacurr = gyroMainAuto.getHeading();
-                    if (Thetacurr > Thetadelta) {
-                        HeadingTurn(Thetacurr - Thetadelta, gearInversion);
+            if (Xdelta != 0 && Ydelta != 0) {
+                Distance = Math.hypot(Xdelta, Ydelta);
+                Thetadelta = Math.atan(Ydelta / Xdelta);
+                Thetadelta = Math.toDegrees(Thetadelta);
+                if (Thetadelta > 0){
+                    if (Xnew > 0){
+                        Thetadelta = Math.abs(Thetadelta);
                     } else {
-                        HeadingTurn(Thetadelta - Thetacurr, gearInversion);
+                        Thetadelta = Thetadelta + 360;
                     }
+                }
+                Thetacurr = gyroMainAuto.getHeading();
+                if (Thetacurr > Thetadelta) {
+                    HeadingTurn(Thetacurr - Thetadelta, gearInversion);
+                } else {
+                    HeadingTurn(Thetadelta - Thetacurr, gearInversion);
+                }
+
+                ASSMove(Distance, Forwards, gearInversion);
+
+                HeadingTurn(Headingfinal, gearInversion);
+
+            } else if (Xdelta == 0) {
+                if (Ydelta < 0) {
+                    HeadingTurn(0, gearInversion);
+                    ;
+                    ASSMove(Distance, Forwards, gearInversion);
+
+                    HeadingTurn(Headingfinal, gearInversion);
+
+                } else {
+                    HeadingTurn(180, gearInversion);
+                    ASSMove(Distance, Forwards, gearInversion);
+
+                    HeadingTurn(Headingfinal, gearInversion);
+
+                }
+            }
+            else if (Ydelta == 0) {
+                if (Xdelta < 0) {
+                    HeadingTurn(90, gearInversion);
 
                     ASSMove(Distance, Forwards, gearInversion);
 
                     HeadingTurn(Headingfinal, gearInversion);
 
-                } else if (Xdelta == 0) {
-                        if (Ydelta < 0) {
-                            HeadingTurn(0, gearInversion);
-                            ;
-                            ASSMove(Distance, Forwards, gearInversion);
+                } else {
+                    HeadingTurn(270, gearInversion);
 
-                            HeadingTurn(Headingfinal, gearInversion);
+                    ASSMove(Distance, Forwards, gearInversion);
 
-                        } else {
-                            HeadingTurn(180, gearInversion);
-                            ASSMove(Distance, Forwards, gearInversion);
+                    HeadingTurn(Headingfinal, gearInversion);
 
-                            HeadingTurn(Headingfinal, gearInversion);
-
-                        }
-                    }
-                 else if (Ydelta == 0) {
-                        if (Xdelta < 0) {
-                            HeadingTurn(90, gearInversion);
-
-                            ASSMove(Distance, Forwards, gearInversion);
-
-                            HeadingTurn(Headingfinal, gearInversion);
-
-                        } else {
-                            HeadingTurn(270, gearInversion);
-
-                            ASSMove(Distance, Forwards, gearInversion);
-
-                            HeadingTurn(Headingfinal, gearInversion);
-
-                        }
-                    Xcurr = Xnew;
-                    Ycurr = Ynew;
                 }
+                Xcurr = Xnew;
+                Ycurr = Ynew;
             }
         }
-        public static void FwdShoot(boolean Forwards, boolean gearInversion){
+    }
+    public static void FwdShoot(boolean Forwards, boolean gearInversion){
 
-        }
+    }
 
     public abstract static class Shooting extends LinearOpMode {
         public static void ParticleShootTele() {
@@ -413,25 +421,25 @@ public class FTC745Drive_v2_1_DEV {
             servoShooterPipe.setPosition(shootpipeMin);
         }
         public static void ParticleShootAuton2() {
-        double lshootPower = 0.34;
-        double rshootPower = 0.4;
-        double shootpipeMax = 0.1;
-        double shootpipeMin = 0.07;
-        double shootgateMin = 0.3;
-        double shootgateMax = 0.6;
-        if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
-            motorLshoot.setPower(lshootPower);
-            motorRshoot.setPower(rshootPower);
-            SystemClock.sleep(6000);
-        }
-        servoShooterGate.setPosition(shootgateMin);
-        SystemClock.sleep(2000);
-        servoShooterGate.setPosition(shootgateMax);
-        SystemClock.sleep(2000);
-        servoShooterPipe.setPosition(shootpipeMin);
-        SystemClock.sleep(2000);
-        servoShooterPipe.setPosition(shootpipeMax);
-        SystemClock.sleep(2000);
+            double lshootPower = 0.34;
+            double rshootPower = 0.4;
+            double shootpipeMax = 0.1;
+            double shootpipeMin = 0.07;
+            double shootgateMin = 0.3;
+            double shootgateMax = 0.6;
+            if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
+                motorLshoot.setPower(lshootPower);
+                motorRshoot.setPower(rshootPower);
+                SystemClock.sleep(6000);
+            }
+            servoShooterGate.setPosition(shootgateMin);
+            SystemClock.sleep(2000);
+            servoShooterGate.setPosition(shootgateMax);
+            SystemClock.sleep(2000);
+            servoShooterPipe.setPosition(shootpipeMin);
+            SystemClock.sleep(2000);
+            servoShooterPipe.setPosition(shootpipeMax);
+            SystemClock.sleep(2000);
         }
     }
 }
