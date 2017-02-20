@@ -38,11 +38,13 @@ import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorLsh
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorRshoot;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.servoShooterPipe;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.servoShooterGate;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.shootpipeMax;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.shootpipeMin;
 
-@Autonomous(name="Auto v2.1 CLEAN DEV", group="Autonomous")
+@Autonomous(name="Auto v2.1 RELEASE", group="Autonomous")
 
 
-public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
+public class FTC745RobitAutonomous_v2_1_RELEASE extends LinearOpMode {
 
     public ColorSensor colorsensFLeft = null;
     public ColorSensor colorsensBLeft = null;
@@ -180,6 +182,7 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
         distanceMainF = hardwareMap.opticalDistanceSensor.get("distanceMainF");
         distanceMainB = hardwareMap.opticalDistanceSensor.get("distanceMainB");
         gyroMainAuto.calibrate();
+        servoShooterPipe.setPosition(shootpipeMax);
         //coordinateSet();
         waitForStart();
         /*Xcurr = 0;
@@ -191,7 +194,7 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
             motorBRight.setPower(0);
             requestOpModeStop();
         }
-            LinearMove(800, false, gearInversion);
+        LinearMove(700, false, gearInversion);
         while (isStopRequested()){
             motorFLeft.setPower(0);
             motorBLeft.setPower(0);
@@ -199,7 +202,7 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
             motorBRight.setPower(0);
             requestOpModeStop();
         }
-            if(robotName == "Slappy") ParticleShootAuton();
+        if(robotName == "Slappy") ParticleShootAuton();
         while (isStopRequested()){
             motorFLeft.setPower(0);
             motorBLeft.setPower(0);
@@ -208,7 +211,7 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
             requestOpModeStop();
         }
         SystemClock.sleep(1000);
-            if(robotName == "Slappy") ParticleShootAuton2();
+        if(robotName == "Slappy") ParticleShootAuton2();
         while (isStopRequested()){
             motorFLeft.setPower(0);
             motorBLeft.setPower(0);
@@ -217,7 +220,7 @@ public class FTC745RobitAutonomous_v2_1_CLEAN_DEV extends LinearOpMode {
             requestOpModeStop();
         }
         SystemClock.sleep(3000);
-            LinearMove(650, false, gearInversion);
+        LinearMove(650, false, gearInversion);
         if (isStopRequested()){
             motorFLeft.setPower(0);
             motorBLeft.setPower(0);
