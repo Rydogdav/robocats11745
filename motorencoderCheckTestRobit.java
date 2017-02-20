@@ -40,9 +40,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name="Motor Encoder Check Robit Test Bed", group="Test Bed")  // @Autonomous(...) is the other common choice
-//@Disabled
+@Disabled
 public class motorencoderCheckTestRobit extends OpMode
 {
     /* Declare OpMode members. */
