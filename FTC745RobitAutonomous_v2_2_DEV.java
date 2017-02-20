@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-
 import android.os.SystemClock;
 import android.provider.Telephony;
 
@@ -19,17 +18,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static android.os.SystemClock.sleep;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.ASSMove;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.AllStop;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Fwd;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.HeadingTurn;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.LinearMove;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.MecanumAuton;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Xcurr;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Ycurr;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.DriveAuton.Fwd;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Shooting.ParticleShootAuton;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Shooting.ParticleShootAuton2;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.DriveAuton.ASSMove;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.DriveAuton.ASSMoveLF;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.DriveAuton.AllStop;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.DriveAuton.Fwd;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.DriveAuton.HeadingTurn;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.DriveAuton.LinearMove;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.DriveAuton.MecanumAutonRight;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.DriveAuton.Xcurr;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.DriveAuton.Ycurr;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.DriveAuton.Fwd;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.Shooting.ParticleShootAuton;
+
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.Shooting.ParticleShootAuton2;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.Forward;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.TurnCW;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorFLeft;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorBLeft;
@@ -39,8 +41,10 @@ import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorLsh
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorRshoot;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.servoShooterPipe;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.servoShooterGate;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_2_DEV.DriveAuton.lfMove;
+import static org.firstinspires.ftc.teamcode.FTC745RobitAutonomous_v2_2_DEV2.gyroMainAuto;
 
-@Autonomous(name="Auto v2.2 CLEAN DEV", group="Autonomous")
+@Autonomous(name="Auto v2.2 DEV", group="Autonomous")
 
 public class FTC745RobitAutonomous_v2_2_DEV extends LinearOpMode {
 
@@ -51,7 +55,6 @@ public class FTC745RobitAutonomous_v2_2_DEV extends LinearOpMode {
 
     public OpticalDistanceSensor distanceMainF = null;
     public OpticalDistanceSensor distanceMainB = null;
-    public static GyroSensor gyroMainAuto = null;
 
     public double motorFLeftPower = 0;
     public double motorBLeftPower = 0;
@@ -178,13 +181,12 @@ public class FTC745RobitAutonomous_v2_2_DEV extends LinearOpMode {
         motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
         distanceMainF = hardwareMap.opticalDistanceSensor.get("distanceMainF");
         distanceMainB = hardwareMap.opticalDistanceSensor.get("distanceMainB");
-        colorsensFLeft = hardwareMap.colorSensor.get("Color Sensor");
+        colorsensFLeft = hardwareMap.colorSensor.get("colorsensFLeft");
+        colorsensFRight = hardwareMap.colorSensor.get("colorsensFRight");
         gyroMainAuto.calibrate();
-        //coordinateSet();
         waitForStart();
-        /*Xcurr = 0;
-        Ycurr = 0;*/
-        while (isStopRequested()) {
+        LineFollower();
+        /*while (isStopRequested()) {
             motorFLeft.setPower(0);
             motorBLeft.setPower(0);
             motorFRight.setPower(0);
@@ -216,7 +218,6 @@ public class FTC745RobitAutonomous_v2_2_DEV extends LinearOpMode {
             motorBRight.setPower(0);
             requestOpModeStop();
         }
-        HeadingTurn(45, gearInversion);
         SystemClock.sleep(3000);
         ASSMove(2000, false, gearInversion);
         if (isStopRequested()) {
@@ -229,10 +230,10 @@ public class FTC745RobitAutonomous_v2_2_DEV extends LinearOpMode {
         SystemClock.sleep(3000);
         telemetry.addLine("Done");
         telemetry.update();
-        idle();
+        idle();*/
     }
 
-    public void AutonInstructions() {
+    /*public void AutonInstructions() {
         if (Alliance == "Blue" && devMode == false) {
             if (startingPosition == "A") {
                 Fwd(-838, -1179, 0, true, gearInversion);
@@ -315,10 +316,10 @@ public class FTC745RobitAutonomous_v2_2_DEV extends LinearOpMode {
                 telemetry.update();
             }
         }
-    }
+    }*/
 
-    public void LineFollower() {
-        final double PERFECT_COLOR_VALUE = .825;
+    /*public void LineFollower() {
+        final double PerfectColorValue = .825;
         double correctionA;
         double correctionB;
         final double MOTOR_BASE_POWER = 0.1;
@@ -328,13 +329,13 @@ public class FTC745RobitAutonomous_v2_2_DEV extends LinearOpMode {
         telemetry.setMsTransmissionInterval(250);
         distanceMainF.enableLed(true);
         do {
-            correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
-            correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+            correctionA = (PerfectColorValue - distanceMainF.getLightDetected());
+            correctionB = (PerfectColorValue - distanceMainB.getLightDetected());
 
             if (correctionA < 0) {
                 lineFound = true;
-                correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
-                correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+                correctionA = (PerfectColorValue - distanceMainF.getLightDetected());
+                correctionB = (PerfectColorValue - distanceMainB.getLightDetected());
                 codePosition = "Line found";
             }
 
@@ -343,8 +344,8 @@ public class FTC745RobitAutonomous_v2_2_DEV extends LinearOpMode {
                 motorBLeft.setPower(MOTOR_BASE_POWER);
                 motorFRight.setPower(MOTOR_BASE_POWER);
                 motorBRight.setPower(MOTOR_BASE_POWER);
-                correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
-                correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+                correctionA = (PerfectColorValue - distanceMainF.getLightDetected());
+                correctionB = (PerfectColorValue - distanceMainB.getLightDetected());
                 codePosition = "Rollin'";
             }
             if (lineFound) {
@@ -352,14 +353,14 @@ public class FTC745RobitAutonomous_v2_2_DEV extends LinearOpMode {
                 motorBLeftPower = -.1;
                 motorFRightPower = .1;
                 motorBRightPower = .1;
-                correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
-                correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+                correctionA = (PerfectColorValue - distanceMainF.getLightDetected());
+                correctionB = (PerfectColorValue - distanceMainB.getLightDetected());
                 codePosition = "Line found spin";
             }
             if (correctionB < 0) {
                 lineFoundB = true;
-                correctionA = (PERFECT_COLOR_VALUE - distanceMainF.getLightDetected());
-                correctionB = (PERFECT_COLOR_VALUE - distanceMainB.getLightDetected());
+                correctionA = (PerfectColorValue - distanceMainF.getLightDetected());
+                correctionB = (PerfectColorValue - distanceMainB.getLightDetected());
             }
             if (lineFoundB) {
                 AllStop();
@@ -383,25 +384,27 @@ public class FTC745RobitAutonomous_v2_2_DEV extends LinearOpMode {
             telemetry.addLine(codePosition);
             telemetry.update();
         } while (!isStopRequested());
-    }
-
-    public void BeaconAuton() {
-        final double PerfectRedFound = 10;
-        final double PerfectBlueFound = 3;
-        telemetry.addData("Red Value", colorsensFLeft.red());
-        telemetry.addData("Blue Value", colorsensFLeft.blue());
-
-        if (Alliance == "Red"){
-            if (colorsensFLeft.red() == PerfectRedFound) {
-                MecanumAuton();
+    }*/
+    public void LineFollower() {
+        final double PerfectColorValue = .0825;
+        double correction = 0;
+        boolean lineFound = false;
+        lfMove = true;
+        do {
+            correction = Math.abs(PerfectColorValue - distanceMainF.getLightDetected());
+            telemetry.addData("Light Detected", distanceMainF.getLightDetected());
+            telemetry.addLine("In loop");
+            telemetry.update();
+            if (correction <= .01) {
+                lfMove = false;
+                AllStop();
+                SystemClock.sleep(1000);
+                MecanumAutonRight(2000);
+                lineFound = true;
             }
-        }
-        if (Alliance == "Blue") {
-            if (colorsensFLeft.blue() == PerfectBlueFound) {
-                MecanumAuton();
-            }
-        }
-
+        } while(!lineFound);
+        telemetry.addLine("Out of loop");
+        telemetry.update();
     }
 }
 
