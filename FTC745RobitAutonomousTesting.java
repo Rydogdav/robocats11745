@@ -4,16 +4,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.ASSMove;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.Fwd;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.Xcurr;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_DEV.DriveAuton.Ycurr;
-import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_DEV.TILE;
-import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_DEV.gyroMain;
-import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_DEV.motorBLeft;
-import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_DEV.motorBRight;
-import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_DEV.motorFLeft;
-import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_DEV.motorFRight;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveAuton.ASSMove;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveAuton.Fwd;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveAuton.Xcurr;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveAuton.Ycurr;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.TILE;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.gyroMain;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.motorBLeft;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.motorBRight;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.motorFLeft;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_2_RELEASE.motorFRight;
 
 /**
  * Created by Ryan Davitt on 1/4/2017.
