@@ -8,6 +8,7 @@
  Version 2.1- RELEASE
  Version 2.1.1- Tweaked gear numbers to acommadate for motor power curve
  Version 2.2- RELEASE
+ Version 2.3- Post Qualifier Tournament code
  **/
 
 package org.firstinspires.ftc.teamcode;
@@ -53,10 +54,10 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
 
     public static double lshootPower = 0.34;
     public static double rshootPower = 0.4;
-    public static double shootpipeMax = 0.09;
-    public static double shootpipeMin = 0.06;
-    public double shootgateMin = 0.47;
-    public double shootgateMax = 0.6;
+    public static double shootpipeMax = 0.24;
+    public static double shootpipeMin = 0.0;
+    public double shootgateMax = 0.08;
+    public double shootgateMin = 0.59;
 
     public double North = 0;
     public double East = 0;
@@ -88,33 +89,6 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        motorFLeft = hardwareMap.dcMotor.get("motorFLeft");
-        motorFRight = hardwareMap.dcMotor.get("motorFRight");
-        motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
-        motorBRight = hardwareMap.dcMotor.get("motorBRight");
-        motorLshoot = hardwareMap.dcMotor.get("motorLshoot");
-        motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
-        //motorThrasher = hardwareMap.dcMotor.get("motorThrasher");
-        servoShooterPipe = hardwareMap.servo.get("servoShooterPipe");
-        servoShooterGate = hardwareMap.servo.get("servoShooterGate");
-        motorFLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
-
-
-        gyroMain = hardwareMap.gyroSensor.get("gyroMain");
-
-        //servoMain = hardwareMap.servo.get("servoMain");
-        //colorsensMain = hardwareMap.colorSensor.get("colorsensMain");
-        //colorsensLine = hardwareMap.opticalDistanceSensor.get("colorsensLine");
-        //distanceMain = hardwareMap.opticalDistanceSensor.get("distanceMain");
-        //colorsensLine.enableLed(true);
-
-        //recalibrate gyro TAKE OUT WHEN AUTONOMOUS IS WORKING
-        gyroMain.calibrate();
-        servoShooterPipe.setPosition(shootpipeMin);
         boolean selectionConfirm = false;
         String robotName = "NO NAME! A = Slappy, B = Sloppy.";
         telemetry.addLine("Please State Robot Name:");
@@ -128,6 +102,35 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
             if (gamepad1.y || gamepad2.y) selectionConfirm = true;
         } while (selectionConfirm == false);
         telemetry.clear();
+        motorFLeft = hardwareMap.dcMotor.get("motorFLeft");
+        motorFRight = hardwareMap.dcMotor.get("motorFRight");
+        motorBLeft = hardwareMap.dcMotor.get("motorBLeft");
+        motorBRight = hardwareMap.dcMotor.get("motorBRight");
+        if(robotName == "Slappy") {
+            motorLshoot = hardwareMap.dcMotor.get("motorLshoot");
+            motorRshoot = hardwareMap.dcMotor.get("motorRshoot");
+            motorThrasher = hardwareMap.dcMotor.get("motorThrasher");
+            servoShooterPipe = hardwareMap.servo.get("servoShooterPipe");
+            servoShooterGate = hardwareMap.servo.get("servoShooterGate");
+            motorLshoot.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
+        motorFLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        gyroMain = hardwareMap.gyroSensor.get("gyroMain");
+
+        //servoMain = hardwareMap.servo.get("servoMain");
+        //colorsensMain = hardwareMap.colorSensor.get("colorsensMain");
+        //colorsensLine = hardwareMap.opticalDistanceSensor.get("colorsensLine");
+        //distanceMain = hardwareMap.opticalDistanceSensor.get("distanceMain");
+        //colorsensLine.enableLed(true);
+
+        //recalibrate gyro TAKE OUT WHEN AUTONOMOUS IS WORKING
+        gyroMain.calibrate();
+        servoShooterPipe.setPosition(shootpipeMax);
+
         telemetry.addData("Status:", "Initialized. Welcome user. v2.3 DEV Active");
         telemetry.update();
         idle();
@@ -155,6 +158,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
                 SystemClock.sleep(150); //Reduce double clicking
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
+                idle();
             }
             if (gamepad1.left_bumper && gamepad1.y || gamepad2.left_bumper && gamepad2.y) {
                 SystemClock.sleep(150); //Reduce double clicking
@@ -170,23 +174,30 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
             if (gamepad1.left_bumper && gamepad1.x || gamepad2.left_bumper && gamepad2.x){
                 SystemClock.sleep(150); //Reduce double clicking
                 servoShooterGate.setPosition(shootgateMin);
-                SystemClock.sleep(2000);
+                SystemClock.sleep(750);
                 servoShooterGate.setPosition(shootgateMax);
+                idle();
             }
-            /*if (gamepad1.left_bumper && gamepad1.b) {
+            if (gamepad1.left_bumper && gamepad1.b) {
                 SystemClock.sleep(150); // Reduces double clicking
-                motorThrasher.setPower(.17);
-            }*/
-
+                if (motorThrasher.getPower() != 0) {
+                    motorThrasher.setPower(0);
+                } else {
+                    motorThrasher.setPower(.6);
+                }
+                idle();
+            }
             //get driver joystick input
             if(robotName == "Slappy") {
                 North = +gamepad1.left_stick_y;   //away from driver on field
                 East = -gamepad1.left_stick_x;   //right with respect to driver
                 TurnCW = -gamepad1.right_stick_x;//clockwise
+                idle();
             }
             if(robotName == "Sloppy") {
                 North = -gamepad1.left_stick_y; //
                 TurnCW = +gamepad1.right_stick_x;
+                idle();
             }
             FieldCentricMecanum(North, East, TurnCW);
 
@@ -201,6 +212,7 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
             if(gamepad1.y || gamepad2.y){
                 SystemClock.sleep(500); //Reduce double clicking
                 ResetEncoder();
+                idle();
             }
             motorFLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorBLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
