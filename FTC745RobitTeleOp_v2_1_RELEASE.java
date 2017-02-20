@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name="TeleOp v2.1.1 FULL", group="TeleOp")  // @Autonomous(...) is the other common choice
+@Disabled
 
 //@Disabled
 public class FTC745RobitTeleOp_v2_1_RELEASE extends OpMode {
