@@ -32,12 +32,12 @@ import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveTeleOp.motorBRightv;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveTeleOp.motorFLeftv;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveTeleOp.motorFRightv;
-import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.Shooting.ParticleShoot;
+import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.Shooting.ParticleShootTele;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_0_RELEASE.DriveTeleOp.FieldCentricMecanum;
 
 
 
-@TeleOp(name="TeleOp v2.2 DEV", group="TeleOp")  // @Autonomous(...) is the other common choice
+@TeleOp(name="TeleOp v2.2 Release", group="TeleOp")  // @Autonomous(...) is the other common choice
 public class FTC745RobitTeleOp_v2_2_RELEASE extends LinearOpMode {
     /* Declare OpMode members. */
     public static DcMotor motorFLeft = null;
@@ -70,7 +70,7 @@ public class FTC745RobitTeleOp_v2_2_RELEASE extends LinearOpMode {
     public static double Strafe = 0;
     public static double TurnCW = 0;
 
-    final static public double Kf = 0.8;   //Ether's Kf
+    final static public double Kf = 1;   //Ether's Kf
     final static public double Ks = 1;   //Ether's Ks
     final static public double Kt = 1;   //Ether's Kt
 
@@ -84,7 +84,7 @@ public class FTC745RobitTeleOp_v2_2_RELEASE extends LinearOpMode {
     final static double ROBOT_TURN_CIRCLE_RADIUS = 7.625;
     final static double ROBOT_TURN_CURCUMFERENCE = ROBOT_TURN_CIRCLE_RADIUS * Math.PI * 25.4;
 
-    final static int TILE = 610;
+    final static int TILE = 610; //mm
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -111,7 +111,7 @@ public class FTC745RobitTeleOp_v2_2_RELEASE extends LinearOpMode {
 
         //recalibrate gyro TAKE OUT WHEN AUTONOMOUS IS WORKING
         gyroMain.calibrate();
-        telemetry.addData("Status", "Initialized. Welcome user. v2.3 Now with PRECISION!!! (and Debug Gyro)!");
+        telemetry.addData("Status", "Initialized. Welcome user. v2.2 Active");
         //servoShooterPipe.setPosition(120);
         // servoMain.setPosition(0);
         idle();
