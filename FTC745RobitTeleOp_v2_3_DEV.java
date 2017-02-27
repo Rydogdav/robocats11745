@@ -32,7 +32,6 @@ import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.moto
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.motorFRightv;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Shooting.ParticleShootTele;
 
-
 @TeleOp(name="TeleOp v2.3 DEV", group="TeleOp")  // @Autonomous(...) is the other common choice
 public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
     /* Declare OpMode members. */
@@ -52,12 +51,12 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
     public Servo servoMain = null;
 
 
-    public static double lshootPower = 0.34;
-    public static double rshootPower = 0.4;
-    public static double shootpipeMax = 0.24;
-    public static double shootpipeMin = 0.0;
-    public double shootgateMax = 0.08;
-    public double shootgateMin = 0.59;
+    public static double lshootPower = 0.51;
+    public static double rshootPower = 0.57;
+    public static double shootpipeMax = 0.53;
+    public static double shootpipeMin = 0.33;
+    public static double shootgateMax = 0.78;
+    public static double shootgateMin = 0.47;
 
     public double North = 0;
     public double East = 0;
@@ -130,13 +129,14 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
         //recalibrate gyro TAKE OUT WHEN AUTONOMOUS IS WORKING
         gyroMain.calibrate();
         servoShooterPipe.setPosition(shootpipeMax);
+        servoShooterGate.setPosition(shootgateMin);
 
         telemetry.addData("Status:", "Initialized. Welcome user. v2.3 DEV Active");
         telemetry.update();
         idle();
         waitForStart();
         telemetry.clearAll();
-        do{
+        do {
 
             //Driver 1 Controls
             // get driver gear input
@@ -173,9 +173,9 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
             }
             if (gamepad1.left_bumper && gamepad1.x || gamepad2.left_bumper && gamepad2.x){
                 SystemClock.sleep(150); //Reduce double clicking
-                servoShooterGate.setPosition(shootgateMin);
-                SystemClock.sleep(750);
                 servoShooterGate.setPosition(shootgateMax);
+                SystemClock.sleep(750);
+                servoShooterGate.setPosition(shootgateMin);
                 idle();
             }
             if (gamepad1.left_bumper && gamepad1.b) {
@@ -229,5 +229,4 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
         idle();
         requestOpModeStop();
     }
-
 }
