@@ -10,7 +10,10 @@ import org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV;
 
 import static android.R.transition.move;
 import static org.firstinspires.ftc.teamcode.FTC745RobitAutonomous_v2_2_DEV2.lfMove;
+import static org.firstinspires.ftc.teamcode.FTC745RobitShootTestv1_0.shootgateMax;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.lshootPower;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorThrasher;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.rshootPower;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.servoShooterGate;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.Forward;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.Kf;
@@ -29,6 +32,7 @@ import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorLsh
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.motorRshoot;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.servoShooterPipe;
 import static org.firstinspires.ftc.teamcode.FTC745RobitAutonomous_v2_2_DEV2.gyroMainAuto;
+import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.shootgateMin;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.shootpipeMax;
 import static org.firstinspires.ftc.teamcode.FTC745RobitTeleOp_v2_3_DEV.shootpipeMin;
 import static org.firstinspires.ftc.teamcode.FTC745RobitAutonomous_v2_2_DEV2.distanceMainF;
@@ -49,7 +53,7 @@ public class FTC745Drive_v2_2_DEV {
     static double motorBRightAdj = 0.95;
     static double motorBLeftAdj = 1.3;
 
-    public static void motorAdjustments(){
+    public static void motorAdjustments(){ //Adjusts the motors so that they do not overlap
         if (motorFLeftv != 0) {
             motorFLeftv *= motorFLeftFwd * motorFLeftAdj;
         }
@@ -76,7 +80,7 @@ public class FTC745Drive_v2_2_DEV {
             motorBLeftv *= motorBLeftAdj;
         }
         */
-        if (motorFLeft.getDirection() == DcMotorSimple.Direction.REVERSE) {
+        if (motorFLeft.getDirection() == DcMotorSimple.Direction.REVERSE) { //Stops the drifting of the robot
             motorFLeftFwd = 1 - Offset;
         }
         if (motorFRight.getDirection() == DcMotorSimple.Direction.REVERSE) {
@@ -157,7 +161,7 @@ public class FTC745Drive_v2_2_DEV {
         final static double ROBOT_TURN_CIRCLE_RADIUS = 7.625;
         final static double ROBOT_TURN_CURCUMFERECE = ROBOT_TURN_CIRCLE_RADIUS * Math.PI * 25.4;
 
-        public static void ResetEncoder() {
+        public static void ResetEncoder() { //Resets all motor encoders
 
             motorFLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             motorFRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -175,7 +179,7 @@ public class FTC745Drive_v2_2_DEV {
             motorBRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        public static void ResetEncoderlf() {
+        public static void ResetEncoderlf() { //Runs Line Follower without encoders
 
             motorFLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             motorFRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -183,28 +187,37 @@ public class FTC745Drive_v2_2_DEV {
             motorBRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        public static void AllStop() {
+        public static void AllStop() { //Stops all the motors
             motorFLeft.setPower(0);
             motorBRight.setPower(0);
             motorBLeft.setPower(0);
             motorFRight.setPower(0);
         }
-
-        public static void HeadingTurn(double HEADING, boolean gearInversion) {
+        public static void HeadingTurn(double HEADING, boolean gearInversion) { //Method for turning 
             boolean move = true;
             int gearInversionInt = 1;
             double speedMultiplier = 1;
             double smFinder = 0;
             if (gearInversion) gearInversionInt = -1;
+            if (HEADING > 180) {
+                HEADING -= 180;
+            } else {
+                HEADING += 180;
+            }
             do {
                 Thetacurr = gyroMainAuto.getHeading();
+                if (Thetacurr > 180) {
+                    Thetacurr -= 180;
+                } else {
+                    Thetacurr += 180;
+                }
                 if (Thetacurr > HEADING) {
                     motorFLeft.setPower(-0.3 * gearInversionInt * speedMultiplier); //Runs to position at this power
                     motorBLeft.setPower(-0.3 * gearInversionInt * speedMultiplier);
                     motorFRight.setPower(0.3 * gearInversionInt * speedMultiplier);
                     motorBRight.setPower(0.3 * gearInversionInt * speedMultiplier);
                 } else {
-                    if (HEADING < Thetacurr) {
+                    if (Thetacurr < HEADING) {
                         motorFLeft.setPower(0.3 * gearInversionInt * speedMultiplier); //Runs to position at this power
                         motorBLeft.setPower(0.3 * gearInversionInt * speedMultiplier);
                         motorFRight.setPower(-0.3 * gearInversionInt * speedMultiplier);
@@ -307,7 +320,7 @@ public class FTC745Drive_v2_2_DEV {
                 motorFRight.setPower(DIRECTION_MULTIPLIER * motorFRightv);
                 motorBLeft.setPower(DIRECTION_MULTIPLIER * motorBLeftv);
                 motorBRight.setPower(DIRECTION_MULTIPLIER * motorBRightv);
-                if (distanceMainF.getLightDetected() >= PerfectColorValue )  {
+                if (distanceMainF.getLightDetected() >= PerfectColorValue)  {
                     lfMove = false;
                 }
             } while (lfMove);
@@ -391,47 +404,6 @@ public class FTC745Drive_v2_2_DEV {
             ResetEncoderlf();
         }
 
-        public static void MecanumAutonRight(int ms) {
-            double startTime = SystemClock.currentThreadTimeMillis();
-            final double PerfectColorValue = 0.0825;
-            double correction = 0;
-            correction = Math.abs(PerfectColorValue - distanceMainF.getLightDetected());
-            do {
-                if (correction > 0.01) {
-                    double motorCorrection = 1 - (correction * 10);
-                    motorBLeftv = 0.1 + motorCorrection;
-                    motorFLeftv = 0.1 + motorCorrection;
-                    motorBRightv = 0.1 - motorCorrection;
-                    motorFRightv = 0.1 - motorCorrection;
-                    motorAdjustments();
-
-                    motorFLeft.setPower(motorFLeftv);
-                    motorBRight.setPower(motorBRightv);
-                    motorBLeft.setPower(motorBLeftv);
-                    motorFRight.setPower(motorFRightv);
-
-                    SystemClock.sleep(250);
-
-                    if () {
-
-                    }
-                }
-            } while( != ms)
-            motorBLeftv = 0.1;
-            motorFLeftv = 0.1;
-            motorBRightv = 0.1;
-            motorFRightv = 0.1;
-            motorAdjustments();
-
-            motorFLeft.setPower(motorFLeftv);
-            motorBRight.setPower(motorBRightv);
-            motorBLeft.setPower(motorBLeftv);
-            motorFRight.setPower(motorFRightv);
-            SystemClock.sleep(ms);
-            AllStop();
-            ResetEncoder();
-        }
-
         public static int Xcurr;
         public static int Ycurr;
         public static int Thetacurr;
@@ -512,43 +484,56 @@ public class FTC745Drive_v2_2_DEV {
         }
 
         public static void ParticleShootAuton() {
-            double lshootPower = 0.34;
-            double rshootPower = 0.4;
-            double shootpipeMin = 0.24;
-            double shootpipeMax = 0.0;
-            double shootgateMax = 0.08;
-            double shootgateMin = 0.59;
-            if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
+            /*double lshootPower = 0.47;
+            double rshootPower = 0.53;
+            double shootpipeMin = 0.27;
+            double shootpipeMax = 0.53;
+            double shootgateMax = 0.78;
+            double shootgateMin = 0.47;*/
+            if ((motorLshoot.getPower() != lshootPower) || (motorRshoot.getPower() != rshootPower)) {
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
-                SystemClock.sleep(5000);
+                SystemClock.sleep(3000);
             }
             servoShooterPipe.setPosition(shootpipeMin);
             SystemClock.sleep(1000);
             servoShooterPipe.setPosition(shootpipeMax);
             SystemClock.sleep(1000);
-            servoShooterPipe.setPosition(shootpipeMin);
         }
-        public static void ParticleShootAuton2() {
-            double lshootPower = 0.34;
-            double rshootPower = 0.4;
-            double shootpipeMin = 0.24;
-            double shootpipeMax = 0.0;
-            double shootgateMax = 0.08;
-            double shootgateMin = 0.59;
-            if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
-                motorLshoot.setPower(lshootPower);
-                motorRshoot.setPower(rshootPower);
-                SystemClock.sleep(4000);
-            }
-            servoShooterGate.setPosition(shootgateMin);
-            SystemClock.sleep(1000);
+        public static void ParticleShootAuton2()
+        {
+            /*
+            double shootgateMax = 0.78;
+            double shootgateMin = 0.47;*/
+            motorLshoot.setPower(0);
+            motorRshoot.setPower(0);
             servoShooterGate.setPosition(shootgateMax);
             SystemClock.sleep(1000);
+            servoShooterGate.setPosition(shootgateMin);
+            ParticleShootAuton();
+            motorLshoot.setPower(0);
+            motorRshoot.setPower(0);
+        }
+
+            public static void ParticleShootAuton2_old() {
+            double lshootPower = 0.47;
+            double rshootPower = 0.53;
+            double shootpipeMin = 0.27;
+            double shootpipeMax = 0.53;
+            double shootgateMax = 0.78;
+            double shootgateMin = 0.47;
+            if (motorLshoot.getPower() != lshootPower || motorRshoot.getPower() != rshootPower) {
+                motorLshoot.setPower(lshootPower);
+                motorRshoot.setPower(rshootPower);
+                SystemClock.sleep(3000);
+            }
+            servoShooterGate.setPosition(shootgateMax);
+            SystemClock.sleep(1000);
+            servoShooterGate.setPosition(shootgateMin);
+            SystemClock.sleep(1000);
             servoShooterPipe.setPosition(shootpipeMax);
             SystemClock.sleep(1000);
-            servoShooterPipe.setPosition(shootpipeMin);
-            servoShooterGate.setPosition(shootgateMin);
+            servoShooterPipe.setPosition(shootgateMin);
             motorLshoot.setPower(0);
             motorRshoot.setPower(0);
         }
