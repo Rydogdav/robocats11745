@@ -32,7 +32,7 @@ import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.moto
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.motorFRightv;
 import static org.firstinspires.ftc.teamcode.FTC745Lib.FTC745Drive_v2_1_DEV.Shooting.ParticleShootTele;
 
-@TeleOp(name="TeleOp v2.3 DEV", group="TeleOp")  // @Autonomous(...) is the other common choice
+@TeleOp(name="TeleOp v2.3 DEV", group="TeleOp")
 public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
     /* Declare OpMode members. */
     public static DcMotor motorFLeft = null;
@@ -70,21 +70,21 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
     public static double Strafe = 0;
     public static double TurnCW = 0;
 
-    final static public double Kf = 1;   //Ether's Kf
-    final static public double Ks = 1;   //Ether's Ks
-    final static public double Kt = 1;   //Ether's Kt
+    final static public double Kf = 1;   
+    final static public double Ks = 1;  
+    final static public double Kt = 1;  
 
     public static double maxMotorPower = 1.0;
-    final static int WHEEL_DIAMETER = 4;     //Diameter of the wheel in inches
+    final static int WHEEL_DIAMETER = 4;     
     final static double WHEEL_DIAMETER_MM = WHEEL_DIAMETER * (25.4);
     final static double CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER_MM;
-    final static int ENCODER_CPR = 1120;     //Encoder Counts per Revolution
-    final static double GEAR_RATIO = 1;      //Gear Ratio
+    final static int ENCODER_CPR = 1120;    
+    final static double GEAR_RATIO = 1;      
 
     final static double ROBOT_TURN_CIRCLE_RADIUS = 7.625;
     final static double ROBOT_TURN_CURCUMFERENCE = ROBOT_TURN_CIRCLE_RADIUS * Math.PI * 25.4;
 
-    final static int TILE = 610; //mm
+    final static int TILE = 610; 
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -126,7 +126,6 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
         //distanceMain = hardwareMap.opticalDistanceSensor.get("distanceMain");
         //colorsensLine.enableLed(true);
 
-        //recalibrate gyro TAKE OUT WHEN AUTONOMOUS IS WORKING
         gyroMain.calibrate();
         servoShooterPipe.setPosition(shootpipeMax);
         servoShooterGate.setPosition(shootgateMin);
@@ -138,8 +137,6 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
         telemetry.clearAll();
         do {
 
-            //Driver 1 Controls
-            // get driver gear input
             if (gamepad1.right_bumper && gamepad1.x || gamepad2.right_bumper && gamepad2.x) {
                 gearStatus = "Full Power Activated";
                 currentGear = 0.9;
@@ -153,33 +150,33 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
                 gearStatus = "Precision Mode Activated";
             }
             telemetry.addData("Gear: ", gearStatus);
-            //Driver 2 Controls
+        
             if (gamepad1.left_bumper && gamepad1.a && motorLshoot.getPower() == 0 || gamepad2.left_bumper && gamepad2.a && motorLshoot.getPower() == 0) {
-                SystemClock.sleep(150); //Reduce double clicking
+                SystemClock.sleep(150); 
                 motorLshoot.setPower(lshootPower);
                 motorRshoot.setPower(rshootPower);
                 idle();
             }
             if (gamepad1.left_bumper && gamepad1.y || gamepad2.left_bumper && gamepad2.y) {
-                SystemClock.sleep(150); //Reduce double clicking
+                SystemClock.sleep(150); 
                 ParticleShootTele();
                 idle();
             }
             if (gamepad1.left_bumper && gamepad1.a && motorLshoot.getPower() > 0 || gamepad2.left_bumper && gamepad2.a && motorLshoot.getPower() > 0) {
-                SystemClock.sleep(150); //Reduce double clicking
+                SystemClock.sleep(150); 
                 motorLshoot.setPower(0);
                 motorRshoot.setPower(0);
                 idle();
             }
             if (gamepad1.left_bumper && gamepad1.x || gamepad2.left_bumper && gamepad2.x){
-                SystemClock.sleep(150); //Reduce double clicking
+                SystemClock.sleep(150); 
                 servoShooterGate.setPosition(shootgateMax);
                 SystemClock.sleep(750);
                 servoShooterGate.setPosition(shootgateMin);
                 idle();
             }
             if (gamepad1.left_bumper && gamepad1.b) {
-                SystemClock.sleep(150); // Reduces double clicking
+                SystemClock.sleep(150);
                 if (motorThrasher.getPower() != 0) {
                     motorThrasher.setPower(0);
                 } else {
@@ -187,30 +184,29 @@ public class FTC745RobitTeleOp_v2_3_DEV extends LinearOpMode {
                 }
                 idle();
             }
-            //get driver joystick input
+           
             if(robotName == "Slappy") {
-                North = +gamepad1.left_stick_y;   //away from driver on field
-                East = -gamepad1.left_stick_x;   //right with respect to driver
-                TurnCW = -gamepad1.right_stick_x;//clockwise
+                North = +gamepad1.left_stick_y;  
+                East = -gamepad1.left_stick_x;  
+                TurnCW = -gamepad1.right_stick_x;
                 idle();
             }
             if(robotName == "Sloppy") {
-                North = -gamepad1.left_stick_y; //
+                North = -gamepad1.left_stick_y;
                 TurnCW = +gamepad1.right_stick_x;
                 idle();
             }
             FieldCentricMecanum(North, East, TurnCW);
 
             idle();
-            //send power settings to the motors
+
             motorFLeft.setPower(motorFLeftv);
             motorFRight.setPower(motorFRightv);
             motorBLeft.setPower(motorBLeftv);
             motorBRight.setPower(motorBRightv);
 
-            //DEBUG
             if(gamepad1.y || gamepad2.y){
-                SystemClock.sleep(500); //Reduce double clicking
+                SystemClock.sleep(500);
                 ResetEncoder();
                 idle();
             }
